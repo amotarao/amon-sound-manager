@@ -5,6 +5,9 @@
     },
     {
       "path": "packages/app"
+    },
+    {
+      "path": "packages/functions"
     }
   ],
   "settings": {
