@@ -1,5 +1,5 @@
 import { doc, setDoc } from 'firebase/firestore';
-import { ref, uploadBytes } from 'firebase/storage';
+import { ref, uploadBytesResumable } from 'firebase/storage';
 import { useState } from 'react';
 import { useEffectOnce } from '../hooks/useEffectOnce';
 import { firestore, storage } from '../libs/firebase';
@@ -12,12 +12,11 @@ export type UploadingFileCardProps = {
 };
 
 export const UploadingFileCard: React.FC<UploadingFileCardProps> = ({ className = '', uid, file }) => {
-  const [state, setState] = useState<'initial' | 'uploading' | 'uploaded'>('initial');
+  const [state, setState] = useState<'initial' | 'uploading' | 'uploaded' | 'error'>('initial');
+  const [uploadRate, setUploadRate] = useState(0);
 
   useEffectOnce(() => {
     (async () => {
-      setState('uploading');
-
       const data: Sound = {
         file: {
           lastModified: file.lastModified,
@@ -32,9 +31,22 @@ export const UploadingFileCard: React.FC<UploadingFileCardProps> = ({ className 
       const storageRef = ref(storage, `sounds/${uid}.mp3`);
 
       await setDoc(doc(firestore, 'sounds', uid), data);
-      await uploadBytes(storageRef, file);
+      const task = uploadBytesResumable(storageRef, file);
 
-      setState('uploaded');
+      task.on(
+        'state_changed',
+        (snapshot) => {
+          setState('uploading');
+          setUploadRate(snapshot.bytesTransferred / snapshot.totalBytes);
+        },
+        (error) => {
+          setState('error');
+          console.error(error);
+        },
+        () => {
+          setState('uploaded');
+        }
+      );
     })();
   });
 
@@ -43,6 +55,7 @@ export const UploadingFileCard: React.FC<UploadingFileCardProps> = ({ className 
       <p>[{uid}]</p>
       <p>{file.name}</p>
       <p>{state}</p>
+      {state === 'uploading' && <p>{Math.floor(uploadRate * 100)}%</p>}
     </div>
   );
 };
