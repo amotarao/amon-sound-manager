@@ -25,6 +25,7 @@ export const UploadingFileCard: React.FC<UploadingFileCardProps> = ({ className 
           type: file.type,
         },
         langs: ['de-DE', 'en-GB'],
+        tags: [],
         speech: null,
         fileMetadata: {},
       };

@@ -8,6 +8,7 @@ export type Sound = {
     lastModified: number;
   };
   langs: string[];
+  tags: string[];
   speech:
     | {
         results: {
