@@ -35,13 +35,7 @@ const Page: NextPage = () => {
       <h1 className="mb-4 text-xl">list</h1>
       <div className="flex flex-col gap-4">
         {docs.map((doc) => (
-          <FileCard
-            key={doc.id}
-            queryDocumentSnapshot={doc}
-            onChange={() => {
-              fetchDocs();
-            }}
-          />
+          <FileCard key={doc.id} queryDocumentSnapshot={doc} />
         ))}
       </div>
     </div>
