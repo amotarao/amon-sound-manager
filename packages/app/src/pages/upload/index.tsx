@@ -12,8 +12,6 @@ const Page: NextPage = () => {
   const langId = useUniqueId();
   const tagsId = useUniqueId();
 
-  console.log({ langId, tagsId });
-
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = useCallback(async (e) => {
     const fileList = e.target.files;
     if (!fileList) {
