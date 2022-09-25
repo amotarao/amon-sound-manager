@@ -1,10 +1,18 @@
 import type { NextPage } from 'next';
 import { useCallback, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { TagEditor } from '../../components/TagEditor';
 import { UploadingFileCard } from '../../components/UploadingFileCard';
+import { useUniqueId } from '../../hooks/useUniqueId';
 
 const Page: NextPage = () => {
   const [files, setFiles] = useState<{ uid: string; file: File }[]>([]);
+  const [tags, setTags] = useState<string[]>([]);
+  const [lang, setLang] = useState('');
+  const langId = useUniqueId();
+  const tagsId = useUniqueId();
+
+  console.log({ langId, tagsId });
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = useCallback(async (e) => {
     const fileList = e.target.files;
@@ -18,12 +26,42 @@ const Page: NextPage = () => {
   }, []);
 
   return (
-    <div>
-      <h1>upload</h1>
-      <input type="file" accept=".mp3" multiple onChange={handleChange} />
+    <div className="mx-auto max-w-[640px]">
+      <h1 className="mb-4 text-xl">upload</h1>
+      <div className="mb-4 flex flex-col gap-4 rounded border p-4">
+        <div className="flex flex-col gap-2">
+          <p className="text-xs">
+            <label htmlFor={tagsId}>Tags</label>
+          </p>
+          <TagEditor
+            inputId={tagsId}
+            onChange={(tags) => {
+              setTags(tags);
+            }}
+          />
+        </div>
+        <div className="flex flex-col gap-2">
+          <p className="text-xs">
+            <label htmlFor={langId}>Language</label>
+          </p>
+          <input
+            id={langId}
+            className="px-2 py-1"
+            type="text"
+            placeholder="lang"
+            value={lang}
+            onChange={(e) => {
+              setLang(e.currentTarget.value);
+            }}
+          />
+        </div>
+        <p>
+          <input type="file" accept=".mp3" multiple onChange={handleChange} />
+        </p>
+      </div>
       <div className="flex flex-col gap-2">
         {files.map((file) => (
-          <UploadingFileCard uid={file.uid} file={file.file} key={file.uid} />
+          <UploadingFileCard key={file.uid} uid={file.uid} file={file.file} tags={tags} lang={lang} />
         ))}
       </div>
     </div>

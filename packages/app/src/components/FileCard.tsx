@@ -1,5 +1,6 @@
 import { QueryDocumentSnapshot } from 'firebase/firestore';
 import { getDownloadURL, ref } from 'firebase/storage';
+import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { useEffectOnce } from '../hooks/useEffectOnce';
 import { storage } from '../libs/firebase';
@@ -26,10 +27,22 @@ export const FileCard: React.FC<FileCardProps> = ({ className = '', queryDocumen
 
   return (
     <div className={`${className} flex flex-col gap-4 border p-4`}>
-      <div>
+      <div className="flex flex-col gap-2">
         <p className="text-sm">{queryDocumentSnapshot.data().file.name}</p>
-        <p className="mt-2 text-xs">ID: {queryDocumentSnapshot.id}</p>
-        <p className="mt-2 text-xs">Title: {queryDocumentSnapshot.data().fileMetadata?.common?.title}</p>
+        <p className="text-xs">ID: {queryDocumentSnapshot.id}</p>
+        <p className="text-xs">Title: {queryDocumentSnapshot.data().fileMetadata?.common?.title}</p>
+        <div className="text-xs">
+          <p>Tags:</p>
+          <ul className="mt-1 flex gap-2">
+            {(queryDocumentSnapshot.data().tags || []).map((tag) => (
+              <li key={tag}>
+                <Link href={{ href: '/', query: { tag } }}>
+                  <a className="rounded-full border px-2">{tag}</a>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
       <div>
         <audio className="h-[32px] w-[320px] text-xs" src={url} controls preload="none" />

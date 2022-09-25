@@ -9,9 +9,17 @@ export type UploadingFileCardProps = {
   className?: string;
   uid: string;
   file: File;
+  tags?: string[];
+  lang?: string;
 };
 
-export const UploadingFileCard: React.FC<UploadingFileCardProps> = ({ className = '', uid, file }) => {
+export const UploadingFileCard: React.FC<UploadingFileCardProps> = ({
+  className = '',
+  uid,
+  file,
+  tags = [],
+  lang = 'ja-JP',
+}) => {
   const [state, setState] = useState<'initial' | 'uploading' | 'uploaded' | 'error'>('initial');
   const [uploadRate, setUploadRate] = useState(0);
 
@@ -24,8 +32,8 @@ export const UploadingFileCard: React.FC<UploadingFileCardProps> = ({ className 
           size: file.size,
           type: file.type,
         },
-        langs: ['de-DE', 'en-GB'],
-        tags: [],
+        langs: [lang],
+        tags,
         speech: null,
         fileMetadata: {},
       };
