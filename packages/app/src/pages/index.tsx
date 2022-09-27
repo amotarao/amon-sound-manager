@@ -9,6 +9,7 @@ import {
   where,
 } from 'firebase/firestore';
 import type { NextPage } from 'next';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { FileCard } from '../components/FileCard';
@@ -36,8 +37,18 @@ const Page: NextPage = () => {
     }
     return router.query.tag;
   }, [router]);
+  const sound = useMemo(() => {
+    if (!('sound' in router.query) || !router.query.sound) {
+      return null;
+    }
+    if (Array.isArray(router.query.sound)) {
+      return router.query.sound[0];
+    }
+    return router.query.sound;
+  }, [router]);
 
   const [docs, setDocs] = useState<QueryDocumentSnapshot<Sound>[]>([]);
+  const currentDoc = useMemo(() => docs.find((doc) => doc.id === sound), [docs, sound]);
 
   useEffect(() => {
     if (!router.isReady) {
@@ -50,14 +61,59 @@ const Page: NextPage = () => {
   }, [router.isReady, tag]);
 
   return (
-    <div className="mx-auto max-w-[640px]">
-      <h1 className="mb-4 text-xl">
-        {tag || 'ALL'} ({docs.length})
-      </h1>
-      <div className="flex flex-col gap-4">
-        {docs.map((doc) => (
-          <FileCard key={doc.id} queryDocumentSnapshot={doc} />
-        ))}
+    <div className="grid grid-cols-[160px_160px_240px_1fr]">
+      {/* Operator */}
+      <div className="flex h-screen flex-col gap-4 overflow-y-auto border-r pb-10">
+        <ul>
+          {['DB', 'SBB', 'RhB'].map((operator) => (
+            <li key={operator} className="border-b">
+              <Link href={{ href: '/', query: { ...router.query, operator } }}>
+                <a className="block px-4 py-2 text-sm">
+                  <p>{operator}</p>
+                </a>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+      {/* Station */}
+      <div className="flex h-screen flex-col gap-4 overflow-y-auto border-r pb-10">
+        <ul>
+          {['Samdan', 'Klosters Platz'].map((station) => (
+            <li key={station} className="border-b">
+              <Link href={{ href: '/', query: { ...router.query, station } }}>
+                <a className="block px-4 py-2 text-sm">
+                  <p>{station}</p>
+                </a>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+      {/* Sound */}
+      <div className="flex h-screen flex-col gap-4 overflow-y-auto border-r pb-10">
+        <ul>
+          {docs.map((doc) => (
+            <li key={doc.id} className="border-b">
+              <Link href={{ href: '/', query: { ...router.query, sound: doc.id } }}>
+                <a className="block px-4 py-2 text-sm">
+                  <p>{doc.data().file.name}</p>
+                  <ul className="mt-2 flex gap-2">
+                    {doc.data().tags.map((tag) => (
+                      <li key={tag}>
+                        <p className="rounded-full border px-2">{tag}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </a>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+      {/* Detail */}
+      <div className="flex h-screen flex-col gap-4 overflow-y-auto">
+        {currentDoc && <FileCard key={currentDoc.id} queryDocumentSnapshot={currentDoc} />}
       </div>
     </div>
   );
