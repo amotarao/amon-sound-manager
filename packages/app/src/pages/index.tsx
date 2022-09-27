@@ -51,7 +51,9 @@ const Page: NextPage = () => {
 
   return (
     <div className="mx-auto max-w-[640px]">
-      <h1 className="mb-4 text-xl">{tag || 'ALL'}</h1>
+      <h1 className="mb-4 text-xl">
+        {tag || 'ALL'} ({docs.length})
+      </h1>
       <div className="flex flex-col gap-4">
         {docs.map((doc) => (
           <FileCard key={doc.id} queryDocumentSnapshot={doc} />

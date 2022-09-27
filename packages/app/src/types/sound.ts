@@ -9,7 +9,7 @@ export type Sound = {
   };
   langs: string[];
   tags: string[];
-  speech:
+  text:
     | {
         results: {
           alternatives: {
@@ -22,5 +22,6 @@ export type Sound = {
       }
     | Record<string, never>
     | null;
-  fileMetadata?: Partial<IAudioMetadata>;
+  textByManual: string | null;
+  fileMetadata: Partial<IAudioMetadata>;
 };

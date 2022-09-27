@@ -73,10 +73,10 @@ const saveTextResultToFirestore = async (object: Pick<ObjectMetadata, 'name' | '
   const docId = object.name?.replace(/^speeches\//, '').replace(/\.json$/, '');
   const docRef = firestore.doc(`/sounds/${docId}`);
 
-  const data = await downloadObjectBuffer(object);
-  const json = JSON.parse(data.toString());
+  const buffer = await downloadObjectBuffer(object);
+  const textJson = JSON.parse(buffer.toString());
 
   await docRef.update({
-    speech: json,
+    text: textJson,
   });
 };

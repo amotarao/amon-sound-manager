@@ -34,7 +34,8 @@ export const UploadingFileCard: React.FC<UploadingFileCardProps> = ({
         },
         langs: [lang],
         tags,
-        speech: null,
+        text: null,
+        textByManual: null,
         fileMetadata: {},
       };
       const storageRef = ref(storage, `sounds/${uid}.mp3`);

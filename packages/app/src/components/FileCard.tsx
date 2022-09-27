@@ -1,7 +1,8 @@
-import { QueryDocumentSnapshot } from 'firebase/firestore';
+import { deleteDoc, DocumentReference, QueryDocumentSnapshot, updateDoc } from 'firebase/firestore';
 import { getDownloadURL, ref } from 'firebase/storage';
+import { debounce } from 'lodash';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useEffectOnce } from '../hooks/useEffectOnce';
 import { storage } from '../libs/firebase';
 import { Sound } from '../types/sound';
@@ -22,11 +23,21 @@ export const FileCard: React.FC<FileCardProps> = ({ className = '', queryDocumen
       const storageRef = ref(storage, `sounds/${queryDocumentSnapshot.id}.mp3`);
       const url = await getDownloadURL(storageRef);
       setUrl(url);
-    })();
+    })().catch((error) => {
+      console.error(error);
+    });
   });
 
   return (
-    <div className={`${className} flex flex-col gap-4 border p-4`}>
+    <div className={`${className} relative flex flex-col gap-4 border p-4`}>
+      <button
+        className="absolute right-4 top-4 rounded border px-2 text-sm"
+        onClick={() => {
+          deleteDoc(queryDocumentSnapshot.ref);
+        }}
+      >
+        Delete
+      </button>
       <div className="flex flex-col gap-2">
         <p className="text-sm">{queryDocumentSnapshot.data().file.name}</p>
         <p className="text-xs">ID: {queryDocumentSnapshot.id}</p>
@@ -49,9 +60,9 @@ export const FileCard: React.FC<FileCardProps> = ({ className = '', queryDocumen
       </div>
       <div>
         <p className="mb-1 text-xs font-bold">[Speech to Text]</p>
-        {'speech' in data && data.speech && 'results' in data.speech ? (
+        {data.text && 'results' in data.text ? (
           <p className="text-sm">
-            {data.speech.results
+            {data.text.results
               .map((result) => result.alternatives.map((alternative) => alternative.transcript).join('\n'))
               .join('\n')}
           </p>
@@ -59,6 +70,51 @@ export const FileCard: React.FC<FileCardProps> = ({ className = '', queryDocumen
           <p className="text-sm">データなし</p>
         )}
       </div>
+      <TextByManualSection docRef={queryDocumentSnapshot.ref} defaultTextByManual={data.textByManual} />
+    </div>
+  );
+};
+
+const TextByManualSection: React.FC<{
+  docRef: DocumentReference<Sound>;
+  defaultTextByManual: Sound['textByManual'];
+}> = ({ docRef, defaultTextByManual }) => {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [tmpTextByManual, setTmpTextByManual] = useState(defaultTextByManual || '');
+
+  const updateTextByManual = useMemo(
+    () =>
+      debounce((textByManual: string) => {
+        updateDoc(docRef, {
+          textByManual: textByManual || null,
+        });
+      }, 1000),
+    [docRef]
+  );
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = '0';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [textareaRef]);
+
+  return (
+    <div>
+      <p className="mb-1 text-xs font-bold">[Text By Manual]</p>
+      <textarea
+        ref={textareaRef}
+        className="min-h-[1px] w-full resize-none p-2 text-sm"
+        value={tmpTextByManual}
+        onInput={(e) => {
+          setTmpTextByManual(e.currentTarget.value);
+          updateTextByManual(e.currentTarget.value);
+          if (textareaRef.current) {
+            textareaRef.current.style.height = '0';
+            textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+          }
+        }}
+      ></textarea>
     </div>
   );
 };
