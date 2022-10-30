@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useCallback, useState } from 'react';
 
 export type TagEditorProps = {
   className?: string;
+  defaultValue?: string[];
   inputId?: string;
   onAdd?: (tag: string) => void;
   onRemove?: (tag: string) => void;
@@ -10,6 +11,7 @@ export type TagEditorProps = {
 
 export const TagEditor: React.FC<TagEditorProps> = ({
   className = '',
+  defaultValue = [],
   inputId,
   onAdd = () => null,
   onRemove = () => null,
@@ -17,28 +19,34 @@ export const TagEditor: React.FC<TagEditorProps> = ({
 }) => {
   const [inputValue, setInputValue] = useState('');
 
-  const [tags, setTags] = useState<string[]>([]);
+  const [tags, setTags] = useState<string[]>(defaultValue);
 
-  const addTag = (tag: string) => {
-    if (tags.includes(tag)) {
-      return;
-    }
-    setTags((tags) => [...tags, tag]);
-    onAdd(tag);
-  };
+  const addTag = useCallback(
+    (tag: string) => {
+      if (tags.includes(tag)) {
+        return;
+      }
+      const newTags = [...tags, tag];
+      setTags(newTags);
+      onAdd(tag);
+      onChange(newTags);
+    },
+    [tags, onAdd, onChange]
+  );
 
-  const removeTag = (tag: string) => {
-    const index = tags.indexOf(tag);
-    if (index < 0) {
-      return;
-    }
-    setTags((tags) => [...tags.slice(0, index), ...tags.slice(index + 1)]);
-    onRemove(tag);
-  };
-
-  useEffect(() => {
-    onChange(tags);
-  }, [onChange, tags]);
+  const removeTag = useCallback(
+    (tag: string) => {
+      const index = tags.indexOf(tag);
+      if (index < 0) {
+        return;
+      }
+      const newTags = [...tags.slice(0, index), ...tags.slice(index + 1)];
+      setTags(newTags);
+      onRemove(tag);
+      onChange(newTags);
+    },
+    [tags, onRemove, onChange]
+  );
 
   return (
     <div className={`${className} flex flex-wrap gap-2 rounded border p-2`}>

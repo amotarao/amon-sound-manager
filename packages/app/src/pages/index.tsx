@@ -37,7 +37,7 @@ const Page: NextPage = () => {
     }
     return router.query.tag;
   }, [router]);
-  const sound = useMemo(() => {
+  const soundDocId = useMemo(() => {
     if (!('sound' in router.query) || !router.query.sound) {
       return null;
     }
@@ -48,7 +48,6 @@ const Page: NextPage = () => {
   }, [router]);
 
   const [docs, setDocs] = useState<QueryDocumentSnapshot<Sound>[]>([]);
-  const currentDoc = useMemo(() => docs.find((doc) => doc.id === sound), [docs, sound]);
 
   useEffect(() => {
     if (!router.isReady) {
@@ -96,9 +95,13 @@ const Page: NextPage = () => {
           {docs.map((doc) => (
             <li key={doc.id} className="border-b">
               <Link href={{ href: '/', query: { ...router.query, sound: doc.id } }}>
-                <a className="block px-4 py-2 text-sm">
+                <a
+                  className={`block px-4 py-2 text-sm ${
+                    soundDocId === doc.id ? 'bg-neutral-300 dark:bg-neutral-700' : ''
+                  }`}
+                >
                   <p>{doc.data().file.name}</p>
-                  <ul className="mt-2 flex gap-2">
+                  <ul className="mt-2 flex flex-wrap gap-2">
                     {doc.data().tags.map((tag) => (
                       <li key={tag}>
                         <p className="rounded-full border px-2">{tag}</p>
@@ -113,7 +116,7 @@ const Page: NextPage = () => {
       </div>
       {/* Detail */}
       <div className="flex h-screen flex-col gap-4 overflow-y-auto">
-        {currentDoc && <FileCard key={currentDoc.id} queryDocumentSnapshot={currentDoc} />}
+        {soundDocId && <FileCard key={soundDocId} docId={soundDocId} />}
       </div>
     </div>
   );
