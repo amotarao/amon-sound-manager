@@ -1,6 +1,7 @@
 import {
   collection,
   CollectionReference,
+  deleteDoc,
   doc,
   getDocs,
   limit,
@@ -12,7 +13,7 @@ import {
 import type { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { FileCard } from '../components/FileCard';
 import { firestore } from '../libs/firebase/index';
 import { Sound, SoundTag } from '../types/sound';
@@ -62,6 +63,7 @@ const Page: NextPage = () => {
       return;
     }
 
+    setDocs([]);
     fetchDocs(tag).then((docs) => {
       setDocs(docs);
     });
@@ -72,10 +74,15 @@ const Page: NextPage = () => {
       return;
     }
 
+    setTags([]);
     fetchTags().then((tags) => {
       setTags(tags);
     });
   }, [router.isReady]);
+
+  const deleteTag = useCallback((tag: string) => {
+    deleteDoc(doc(collection(doc(collection(firestore, 'sounds'), 'tags'), 'tags'), tag));
+  }, []);
 
   return (
     <div className="grid grid-cols-[240px_320px_1fr]">
@@ -108,19 +115,15 @@ const Page: NextPage = () => {
         </ul>
       </div> */}
       {/* Tag */}
-      <div className="flex h-screen flex-col gap-4 overflow-y-auto border-r pb-10">
+      <div className="flex h-screen flex-col overflow-y-auto border-r pb-10">
         <ul>
-          {tags.map((tag) => (
-            <li key={tag} className="after:mx-2 after:block after:h-[1px] after:bg-current after:content-['']">
-              <Link href={{ href: '/', query: { ...router.query, tag } }}>
-                <a
-                  className={`block px-4 py-2 text-sm ${
-                    tag === router.query.tag ? 'bg-neutral-300 dark:bg-neutral-700' : ''
-                  }`}
-                >
+          {tags.map((_tag) => (
+            <li key={_tag} className="after:mx-2 after:block after:h-[1px] after:bg-current after:content-['']">
+              <Link href={{ href: '/', query: { ...router.query, tag: _tag } }}>
+                <a className={`block px-4 py-2 text-sm ${_tag === tag ? 'bg-neutral-300 dark:bg-neutral-700' : ''}`}>
                   <p>
                     <span className="mr-0.5">#</span>
-                    {tag}
+                    {_tag}
                   </p>
                 </a>
               </Link>
@@ -129,7 +132,20 @@ const Page: NextPage = () => {
         </ul>
       </div>
       {/* Sound */}
-      <div className="flex h-screen flex-col gap-4 overflow-y-auto border-r pb-10">
+      <div className="flex h-screen flex-col overflow-y-auto border-r pb-10">
+        {tag && (
+          <div className="sticky top-0 border-b bg-black p-4">
+            <p>{tag}</p>
+            <button
+              className="absolute right-4 top-4 rounded border px-2 text-sm"
+              onClick={() => {
+                deleteTag(tag);
+              }}
+            >
+              Delete
+            </button>
+          </div>
+        )}
         <ul>
           {docs.map((doc) => (
             <li key={doc.id} className="after:mx-2 after:block after:h-[1px] after:bg-current after:content-['']">
@@ -139,7 +155,7 @@ const Page: NextPage = () => {
                   <ul className="mt-2 flex flex-wrap gap-2">
                     {doc
                       .data()
-                      .tags.filter((tag) => router.query.tag !== tag)
+                      .tags.filter((_tag) => tag !== _tag)
                       .map((tag) => (
                         <li key={tag}>
                           <p className="text-xs">
