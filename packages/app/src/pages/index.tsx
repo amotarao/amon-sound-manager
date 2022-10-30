@@ -1,6 +1,7 @@
 import {
   collection,
   CollectionReference,
+  doc,
   getDocs,
   limit,
   orderBy,
@@ -14,7 +15,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { FileCard } from '../components/FileCard';
 import { firestore } from '../libs/firebase/index';
-import { Sound } from '../types/sound';
+import { Sound, SoundTag } from '../types/sound';
 
 const fetchDocs = async (tag: string | null): Promise<QueryDocumentSnapshot<Sound>[]> => {
   const c = collection(firestore, 'sounds') as CollectionReference<Sound>;
@@ -24,6 +25,12 @@ const fetchDocs = async (tag: string | null): Promise<QueryDocumentSnapshot<Soun
 
   const querySnapshot = await getDocs(q);
   return querySnapshot.docs;
+};
+
+const fetchTags = async (): Promise<string[]> => {
+  const c = collection(doc(collection(firestore, 'sounds'), 'tags'), 'tags') as CollectionReference<SoundTag>;
+  const querySnapshot = await getDocs(c);
+  return querySnapshot.docs.map((doc) => doc.get('name') as string);
 };
 
 const Page: NextPage = () => {
@@ -48,6 +55,7 @@ const Page: NextPage = () => {
   }, [router]);
 
   const [docs, setDocs] = useState<QueryDocumentSnapshot<Sound>[]>([]);
+  const [tags, setTags] = useState<string[]>([]);
 
   useEffect(() => {
     if (!router.isReady) {
@@ -59,10 +67,20 @@ const Page: NextPage = () => {
     });
   }, [router.isReady, tag]);
 
+  useEffect(() => {
+    if (!router.isReady) {
+      return;
+    }
+
+    fetchTags().then((tags) => {
+      setTags(tags);
+    });
+  }, [router.isReady]);
+
   return (
-    <div className="grid grid-cols-[160px_160px_240px_1fr]">
+    <div className="grid grid-cols-[240px_320px_1fr]">
       {/* Operator */}
-      <div className="flex h-screen flex-col gap-4 overflow-y-auto border-r pb-10">
+      {/* <div className="flex h-screen flex-col gap-4 overflow-y-auto border-r pb-10">
         <ul>
           {['DB', 'SBB', 'RhB'].map((operator) => (
             <li key={operator} className="border-b">
@@ -74,9 +92,9 @@ const Page: NextPage = () => {
             </li>
           ))}
         </ul>
-      </div>
+      </div> */}
       {/* Station */}
-      <div className="flex h-screen flex-col gap-4 overflow-y-auto border-r pb-10">
+      {/* <div className="flex h-screen flex-col gap-4 overflow-y-auto border-r pb-10">
         <ul>
           {['Samdan', 'Klosters Platz'].map((station) => (
             <li key={station} className="border-b">
@@ -88,25 +106,48 @@ const Page: NextPage = () => {
             </li>
           ))}
         </ul>
+      </div> */}
+      {/* Tag */}
+      <div className="flex h-screen flex-col gap-4 overflow-y-auto border-r pb-10">
+        <ul>
+          {tags.map((tag) => (
+            <li key={tag} className="after:mx-2 after:block after:h-[1px] after:bg-current after:content-['']">
+              <Link href={{ href: '/', query: { ...router.query, tag } }}>
+                <a
+                  className={`block px-4 py-2 text-sm ${
+                    tag === router.query.tag ? 'bg-neutral-300 dark:bg-neutral-700' : ''
+                  }`}
+                >
+                  <p>
+                    <span className="mr-0.5">#</span>
+                    {tag}
+                  </p>
+                </a>
+              </Link>
+            </li>
+          ))}
+        </ul>
       </div>
       {/* Sound */}
       <div className="flex h-screen flex-col gap-4 overflow-y-auto border-r pb-10">
         <ul>
           {docs.map((doc) => (
-            <li key={doc.id} className="border-b">
+            <li key={doc.id} className="after:mx-2 after:block after:h-[1px] after:bg-current after:content-['']">
               <Link href={{ href: '/', query: { ...router.query, sound: doc.id } }}>
-                <a
-                  className={`block px-4 py-2 text-sm ${
-                    soundDocId === doc.id ? 'bg-neutral-300 dark:bg-neutral-700' : ''
-                  }`}
-                >
-                  <p>{doc.data().file.name}</p>
+                <a className={`block px-4 py-2 ${soundDocId === doc.id ? 'bg-neutral-300 dark:bg-neutral-700' : ''}`}>
+                  <p className="text-sm">{doc.data().file.name}</p>
                   <ul className="mt-2 flex flex-wrap gap-2">
-                    {doc.data().tags.map((tag) => (
-                      <li key={tag}>
-                        <p className="rounded-full border px-2">{tag}</p>
-                      </li>
-                    ))}
+                    {doc
+                      .data()
+                      .tags.filter((tag) => router.query.tag !== tag)
+                      .map((tag) => (
+                        <li key={tag}>
+                          <p className="text-xs">
+                            <span className="mr-0.5">#</span>
+                            {tag}
+                          </p>
+                        </li>
+                      ))}
                   </ul>
                 </a>
               </Link>

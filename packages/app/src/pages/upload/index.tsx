@@ -28,9 +28,9 @@ const Page: NextPage = () => {
       <h1 className="mb-4 text-xl">upload</h1>
       <div className="mb-4 flex flex-col gap-4 rounded border p-4">
         <div className="flex flex-col gap-2">
-          <p className="text-xs">
-            <label htmlFor={tagsId}>Tags</label>
-          </p>
+          <label className="block text-xs" htmlFor={tagsId}>
+            Tags
+          </label>
           <TagEditor
             inputId={tagsId}
             onChange={(tags) => {
@@ -39,9 +39,9 @@ const Page: NextPage = () => {
           />
         </div>
         <div className="flex flex-col gap-2">
-          <p className="text-xs">
-            <label htmlFor={langId}>Language</label>
-          </p>
+          <label className="block text-xs" htmlFor={langId}>
+            Language
+          </label>
           <input
             id={langId}
             className="px-2 py-1"

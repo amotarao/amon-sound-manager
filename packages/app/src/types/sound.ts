@@ -25,3 +25,7 @@ export type Sound = {
   textByManual: string | null;
   fileMetadata: Partial<IAudioMetadata>;
 };
+
+export type SoundTag = {
+  name: string;
+};
