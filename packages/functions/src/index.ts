@@ -8,7 +8,7 @@ import { downloadObjectBuffer } from './libs/storage';
 
 const defaultRegion = functions.region('asia-northeast1');
 
-export const onFinalizeObject = defaultRegion.storage.object().onFinalize(async (object) => {
+export const onFinalizeStorageObject = defaultRegion.storage.object().onFinalize(async (object) => {
   if (object.name?.match(/sounds\/.+\.mp3$/)) {
     await runGenerateTextFromMp3(object);
     await parseMp3Metadata(object);
