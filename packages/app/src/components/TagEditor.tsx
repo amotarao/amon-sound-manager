@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { useInputComposition } from '../hooks/useInputComposition';
 
 export type TagEditorProps = {
   className?: string;
@@ -18,6 +19,7 @@ export const TagEditor: React.FC<TagEditorProps> = ({
   onChange = () => null,
 }) => {
   const [inputValue, setInputValue] = useState('');
+  const { onCompositionStart, onCompositionEnd, handleKeyDown } = useInputComposition();
 
   const [tags, setTags] = useState<string[]>(defaultValue);
 
@@ -71,15 +73,17 @@ export const TagEditor: React.FC<TagEditorProps> = ({
         className="w-max text-sm"
         type="text"
         value={inputValue}
-        onKeyDown={(e) => {
+        onInput={(e) => {
+          setInputValue(e.currentTarget.value);
+        }}
+        onKeyDown={handleKeyDown((e) => {
           if ([',', 'Enter'].includes(e.key)) {
             addTag((e.target as HTMLInputElement).value);
             setInputValue('');
           }
-        }}
-        onInput={(e) => {
-          setInputValue(e.currentTarget.value);
-        }}
+        })}
+        onCompositionStart={onCompositionStart}
+        onCompositionEnd={onCompositionEnd}
       />
     </div>
   );
