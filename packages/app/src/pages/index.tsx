@@ -15,6 +15,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { FileCard } from '../components/FileCard';
+import { TagItemCard } from '../components/TagItemCard';
 import { firestore } from '../libs/firebase/index';
 import { Sound, SoundTag } from '../types/sound';
 
@@ -91,14 +92,7 @@ const Page: NextPage = () => {
         <ul>
           {tags.map((_tag) => (
             <li key={_tag} className="after:mx-2 after:block after:h-[1px] after:bg-current after:content-['']">
-              <Link href={{ href: '/', query: { ...router.query, tag: _tag } }}>
-                <a className={`block px-4 py-2 text-sm ${_tag === tag ? 'bg-neutral-300 dark:bg-neutral-700' : ''}`}>
-                  <p>
-                    <span className="mr-0.5">#</span>
-                    {_tag}
-                  </p>
-                </a>
-              </Link>
+              <TagItemCard tag={_tag} isCurrent={_tag === tag} />
             </li>
           ))}
         </ul>
