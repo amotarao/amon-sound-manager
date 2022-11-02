@@ -90,9 +90,9 @@ const Page: NextPage = () => {
       {/* Tag */}
       <div className="flex h-full flex-col overflow-y-auto border-r pb-10">
         <ul>
-          {tags.map((_tag) => (
+          {['ALL', ...tags].map((_tag) => (
             <li key={_tag} className="after:mx-2 after:block after:h-[1px] after:bg-current after:content-['']">
-              <TagItemCard tag={_tag} isCurrent={_tag === tag} />
+              <TagItemCard tag={_tag} isCurrent={_tag !== 'ALL' ? _tag === tag : !tag} />
             </li>
           ))}
         </ul>

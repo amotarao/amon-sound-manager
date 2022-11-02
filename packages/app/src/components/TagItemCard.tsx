@@ -30,6 +30,10 @@ export const TagItemCard: React.FC<TagItemCardProps> = ({ className, tag, isCurr
       return;
     }
 
+    if (tag === 'ALL') {
+      return;
+    }
+
     setCount(-1);
     fetchTagCount(tag).then((cound) => {
       setCount(cound);
@@ -37,7 +41,7 @@ export const TagItemCard: React.FC<TagItemCardProps> = ({ className, tag, isCurr
   }, [router.isReady, tag]);
 
   return (
-    <Link href={{ href: '/', query: { ...router.query, tag } }}>
+    <Link href={{ href: '/', query: { ...router.query, tag: tag !== 'ALL' ? tag : undefined } }}>
       <a
         className={classNames(
           `block px-4 py-2 text-sm`,
