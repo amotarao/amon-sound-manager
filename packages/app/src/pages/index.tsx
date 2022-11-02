@@ -85,37 +85,9 @@ const Page: NextPage = () => {
   }, []);
 
   return (
-    <div className="grid grid-cols-[240px_320px_1fr]">
-      {/* Operator */}
-      {/* <div className="flex h-screen flex-col gap-4 overflow-y-auto border-r pb-10">
-        <ul>
-          {['DB', 'SBB', 'RhB'].map((operator) => (
-            <li key={operator} className="border-b">
-              <Link href={{ href: '/', query: { ...router.query, operator } }}>
-                <a className="block px-4 py-2 text-sm">
-                  <p>{operator}</p>
-                </a>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div> */}
-      {/* Station */}
-      {/* <div className="flex h-screen flex-col gap-4 overflow-y-auto border-r pb-10">
-        <ul>
-          {['Samdan', 'Klosters Platz'].map((station) => (
-            <li key={station} className="border-b">
-              <Link href={{ href: '/', query: { ...router.query, station } }}>
-                <a className="block px-4 py-2 text-sm">
-                  <p>{station}</p>
-                </a>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div> */}
+    <div className="grid h-full grid-cols-[240px_320px_1fr] overflow-hidden">
       {/* Tag */}
-      <div className="flex h-screen flex-col overflow-y-auto border-r pb-10">
+      <div className="flex h-full flex-col overflow-y-auto border-r pb-10">
         <ul>
           {tags.map((_tag) => (
             <li key={_tag} className="after:mx-2 after:block after:h-[1px] after:bg-current after:content-['']">
@@ -132,7 +104,7 @@ const Page: NextPage = () => {
         </ul>
       </div>
       {/* Sound */}
-      <div className="flex h-screen flex-col overflow-y-auto border-r pb-10">
+      <div className="flex h-full flex-col overflow-y-auto border-r pb-10">
         {tag && (
           <div className="sticky top-0 border-b bg-black p-4">
             <p>{tag}</p>
@@ -172,7 +144,7 @@ const Page: NextPage = () => {
         </ul>
       </div>
       {/* Detail */}
-      <div className="flex h-screen flex-col gap-4 overflow-y-auto">
+      <div className="flex h-full flex-col gap-4 overflow-y-auto">
         {soundDocId && <FileCard key={soundDocId} docId={soundDocId} />}
       </div>
     </div>
