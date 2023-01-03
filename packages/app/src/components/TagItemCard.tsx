@@ -41,20 +41,19 @@ export const TagItemCard: React.FC<TagItemCardProps> = ({ className, tag, isCurr
   }, [router.isReady, tag]);
 
   return (
-    <Link href={{ href: '/', query: { ...router.query, tag: tag !== 'ALL' ? tag : undefined } }}>
-      <a
-        className={classNames(
-          `block px-4 py-2 text-sm`,
-          isCurrent ? 'bg-neutral-300 dark:bg-neutral-700' : null,
-          className
-        )}
-      >
-        <p>
-          <span className="mr-0.5">#</span>
-          <span>{tag}</span>
-          {count > -1 && <span> ({count})</span>}
-        </p>
-      </a>
+    <Link
+      className={classNames(
+        `block px-4 py-2 text-sm`,
+        isCurrent ? 'bg-neutral-300 dark:bg-neutral-700' : null,
+        className
+      )}
+      href={{ href: '/', query: { ...router.query, tag: tag !== 'ALL' ? tag : undefined } }}
+    >
+      <p>
+        <span className="mr-0.5">#</span>
+        <span>{tag}</span>
+        {count > -1 && <span> ({count})</span>}
+      </p>
     </Link>
   );
 };

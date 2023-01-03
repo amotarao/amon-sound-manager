@@ -115,23 +115,24 @@ const Page: NextPage = () => {
         <ul>
           {docs.map((doc) => (
             <li key={doc.id} className="after:mx-2 after:block after:h-[1px] after:bg-current after:content-['']">
-              <Link href={{ href: '/', query: { ...router.query, sound: doc.id } }}>
-                <a className={`block px-4 py-2 ${soundDocId === doc.id ? 'bg-neutral-300 dark:bg-neutral-700' : ''}`}>
-                  <p className="text-sm">{doc.data().file.name}</p>
-                  <ul className="mt-2 flex flex-wrap gap-2">
-                    {doc
-                      .data()
-                      .tags.filter((_tag) => tag !== _tag)
-                      .map((tag) => (
-                        <li key={tag}>
-                          <p className="text-xs">
-                            <span className="mr-0.5">#</span>
-                            {tag}
-                          </p>
-                        </li>
-                      ))}
-                  </ul>
-                </a>
+              <Link
+                className={`block px-4 py-2 ${soundDocId === doc.id ? 'bg-neutral-300 dark:bg-neutral-700' : ''}`}
+                href={{ href: '/', query: { ...router.query, sound: doc.id } }}
+              >
+                <p className="text-sm">{doc.data().file.name}</p>
+                <ul className="mt-2 flex flex-wrap gap-2">
+                  {doc
+                    .data()
+                    .tags.filter((_tag) => tag !== _tag)
+                    .map((tag) => (
+                      <li key={tag}>
+                        <p className="text-xs">
+                          <span className="mr-0.5">#</span>
+                          {tag}
+                        </p>
+                      </li>
+                    ))}
+                </ul>
               </Link>
             </li>
           ))}
