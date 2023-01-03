@@ -114,33 +114,40 @@ const Page: NextPage = () => {
           </div>
         )}
         <ul>
-          {docs.map((doc) => (
-            <li key={doc.id} className="after:mx-2 after:block after:h-[1px] after:bg-current after:content-['']">
-              <Link
-                className={classNames(
-                  'grid grid-rows-1 gap-1 px-4 py-2',
-                  soundDocId === doc.id && 'bg-neutral-300 dark:bg-neutral-700'
-                )}
-                href={{ href: '/', query: { ...router.query, sound: doc.id } }}
-              >
-                <p className="text-sm">{doc.data().title}</p>
-                <p className="text-xs">{doc.data().file.name}</p>
-                <ul className="flex flex-wrap gap-2">
-                  {doc
-                    .data()
-                    .tags.filter((_tag) => tag !== _tag)
-                    .map((tag) => (
-                      <li key={tag}>
-                        <p className="text-xs">
-                          <span className="mr-0.5">#</span>
-                          {tag}
-                        </p>
-                      </li>
-                    ))}
-                </ul>
-              </Link>
-            </li>
-          ))}
+          {docs
+            .sort((a, z) => {
+              const aTitle = a.data().title || '';
+              const zTitle = z.data().title || '';
+
+              return aTitle > zTitle ? 1 : aTitle === zTitle ? 0 : -1;
+            })
+            .map((doc) => (
+              <li key={doc.id} className="after:mx-2 after:block after:h-[1px] after:bg-current after:content-['']">
+                <Link
+                  className={classNames(
+                    'grid grid-rows-1 gap-1 px-4 py-2',
+                    soundDocId === doc.id && 'bg-neutral-300 dark:bg-neutral-700'
+                  )}
+                  href={{ href: '/', query: { ...router.query, sound: doc.id } }}
+                >
+                  <p className="text-sm">{doc.data().title}</p>
+                  <p className="text-xs">{doc.data().file.name}</p>
+                  <ul className="flex flex-wrap gap-2">
+                    {doc
+                      .data()
+                      .tags.filter((_tag) => tag !== _tag)
+                      .map((tag) => (
+                        <li key={tag}>
+                          <p className="text-xs">
+                            <span className="mr-0.5">#</span>
+                            {tag}
+                          </p>
+                        </li>
+                      ))}
+                  </ul>
+                </Link>
+              </li>
+            ))}
         </ul>
       </div>
       {/* Detail */}
