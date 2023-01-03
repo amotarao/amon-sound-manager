@@ -22,6 +22,7 @@ export type Sound = {
       }
     | Record<string, never>
     | null;
+  title: string | null;
   textByManual: string | null;
   fileMetadata: Partial<IAudioMetadata>;
 };

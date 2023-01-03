@@ -35,6 +35,7 @@ export const UploadingFileCard: React.FC<UploadingFileCardProps> = ({
         langs: [lang],
         tags,
         text: null,
+        title: null,
         textByManual: null,
         fileMetadata: {},
       };

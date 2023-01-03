@@ -61,6 +61,7 @@ export const FileCard: React.FC<FileCardProps> = ({ className = '', docId }) => 
       <div>
         <audio className="h-[32px] w-[320px] text-xs" src={url} controls preload="metadata" />
       </div>
+      <TitleSection docRef={snapshot.ref} defaultValue={data.title} />
       <div>
         <p className="mb-1 text-xs font-bold">Speech to Text</p>
         {data.text && 'results' in data.text ? (
@@ -75,6 +76,37 @@ export const FileCard: React.FC<FileCardProps> = ({ className = '', docId }) => 
       </div>
       <TextByManualSection docRef={snapshot.ref} defaultValue={data.textByManual} />
       <TagsSection docRef={snapshot.ref} defaultValue={data.tags} />
+    </div>
+  );
+};
+
+const TitleSection: React.FC<{
+  docRef: DocumentReference<Sound>;
+  defaultValue: Sound['title'];
+}> = ({ docRef, defaultValue }) => {
+  const [value, setValue] = useState(defaultValue || '');
+
+  const updateValue = useMemo(
+    () =>
+      debounce((title: string) => {
+        updateDoc(docRef, {
+          title,
+        });
+      }, 1000),
+    [docRef]
+  );
+
+  return (
+    <div>
+      <p className="mb-1 text-xs font-bold">Title</p>
+      <input
+        className="w-full resize-none p-2 text-sm"
+        value={value}
+        onInput={(e) => {
+          setValue(e.currentTarget.value);
+          updateValue(e.currentTarget.value);
+        }}
+      />
     </div>
   );
 };
