@@ -14,9 +14,19 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({ className }) => {
   const { loading, signedIn } = useAuth();
 
   return (
-    <nav className={classNames('flex h-full items-center justify-between border-b px-4', className)}>
-      <Link href="/">amon sound manager</Link>
+    <nav
+      className={classNames(
+        'grid h-full grid-cols-[minmax(0,1fr)_auto] items-center justify-between border-b px-4',
+        className
+      )}
+    >
       <div>
+        <Link href="/">amon sound manager</Link>
+      </div>
+      <div className="flex gap-4">
+        <Link className="rounded border px-4 py-1" href="/upload">
+          Uplaod
+        </Link>
         {loading ? null : !signedIn ? (
           <button
             className="rounded border px-4 py-1"
