@@ -20,8 +20,10 @@ import { TagItemCard } from '../components/TagItemCard';
 import { firestore } from '../libs/firebase/index';
 import { Sound, SoundTag } from '../types/sound';
 
+const collectionId = 'sounds';
+
 const fetchDocs = async (tag: string | null): Promise<QueryDocumentSnapshot<Sound>[]> => {
-  const c = collection(firestore, 'sounds') as CollectionReference<Sound>;
+  const c = collection(firestore, collectionId) as CollectionReference<Sound>;
   let q = query(c, orderBy('file.name'));
   q = query(q, limit(tag ? 1000 : 30));
   if (tag) q = query(q, where('tags', 'array-contains', tag));
@@ -31,7 +33,7 @@ const fetchDocs = async (tag: string | null): Promise<QueryDocumentSnapshot<Soun
 };
 
 const fetchTags = async (): Promise<string[]> => {
-  const c = collection(doc(collection(firestore, 'sounds'), 'tags'), 'tags') as CollectionReference<SoundTag>;
+  const c = collection(doc(collection(firestore, collectionId), 'tags'), 'tags') as CollectionReference<SoundTag>;
   const querySnapshot = await getDocs(c);
   return querySnapshot.docs.map((doc) => doc.get('name') as string);
 };
@@ -83,7 +85,7 @@ const Page: NextPage = () => {
   }, [router.isReady]);
 
   const deleteTag = useCallback((tag: string) => {
-    deleteDoc(doc(collection(doc(collection(firestore, 'sounds'), 'tags'), 'tags'), tag));
+    deleteDoc(doc(collection(doc(collection(firestore, collectionId), 'tags'), 'tags'), tag));
   }, []);
 
   return (
