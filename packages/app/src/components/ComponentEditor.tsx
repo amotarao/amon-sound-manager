@@ -59,7 +59,7 @@ export const ComponentEditor: React.FC<ComponentEditorProps> = ({
               start: firstDefaultRange.start,
               end: firstDefaultRange.end,
               loop: false,
-              color: 'rgba(255,255,255,0.3)',
+              color: 'rgba(255, 255, 255, 0.3)',
             },
           ],
         }),
