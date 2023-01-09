@@ -2,24 +2,25 @@ import { deleteDoc, doc, DocumentReference, DocumentSnapshot, onSnapshot, update
 import { getDownloadURL, ref } from 'firebase/storage';
 import { debounce } from 'lodash';
 import dynamic from 'next/dynamic';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { firestore, storage } from '../libs/firebase';
-import { Sound } from '../types/sound';
+import { Component } from '../types/component';
+import { Range } from './ComponentEditor';
 import { TagEditor } from './TagEditor';
 
 const ComponentEditor = dynamic(() => import('./ComponentEditor').then((file) => file.ComponentEditor), {
   ssr: false,
 });
 
-const collectionId = 'sounds';
-
-export type FileCardProps = {
+export type ComponentCardProps = {
   className?: string;
+  collectionId: string;
   docId: string;
 };
 
-export const FileCard: React.FC<FileCardProps> = ({ className = '', docId }) => {
-  const [snapshot, setSnapshot] = useState<DocumentSnapshot<Sound>>();
+export const ComponentCard: React.FC<ComponentCardProps> = ({ className = '', collectionId, docId }) => {
+  const [snapshot, setSnapshot] = useState<DocumentSnapshot<Component>>();
+
   const data = useMemo(() => {
     if (!snapshot) {
       return;
@@ -29,22 +30,25 @@ export const FileCard: React.FC<FileCardProps> = ({ className = '', docId }) => 
 
   useEffect(() => {
     const unsubscribe = onSnapshot(doc(firestore, collectionId, docId), (snapshot) => {
-      setSnapshot(snapshot as DocumentSnapshot<Sound>);
+      setSnapshot(snapshot as DocumentSnapshot<Component>);
     });
 
     return () => {
       unsubscribe();
     };
-  }, [docId]);
+  }, [collectionId, docId]);
 
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState<string>();
   useEffect(() => {
     (async () => {
-      const storageRef = ref(storage, `sounds/${docId}.mp3`);
+      if (!data) {
+        return;
+      }
+      const storageRef = ref(storage, `sounds/${data.soundDocId}.mp3`);
       const url = await getDownloadURL(storageRef);
       setUrl(url);
     })().catch(console.error);
-  }, [docId]);
+  }, [docId, data]);
 
   if (!snapshot || !data) {
     return null;
@@ -61,46 +65,35 @@ export const FileCard: React.FC<FileCardProps> = ({ className = '', docId }) => 
         Delete
       </button>
       <div className="flex flex-col gap-2">
-        <p className="text-sm">{data.file.name}</p>
+        <p className="text-sm">{data.name}</p>
         <p className="text-xs">ID: {docId}</p>
-        <p className="text-xs">Title: {data.fileMetadata?.common?.title}</p>
       </div>
-      <div>
-        <audio className="h-[32px] w-[320px] text-xs" src={url} controls preload="metadata" />
-      </div>
-      <TitleSection docRef={snapshot.ref} defaultValue={data.title} />
-      <div>
-        <p className="mb-1 text-xs font-bold">Speech to Text</p>
-        {data.text && 'results' in data.text ? (
-          <p className="text-sm">
-            {data.text.results
-              .map((result) => result.alternatives.map((alternative) => alternative.transcript).join('\n'))
-              .join('\n')}
-          </p>
-        ) : (
-          <p className="text-sm">データなし</p>
-        )}
-      </div>
-      <TextByManualSection docRef={snapshot.ref} defaultValue={data.textByManual} />
+      <NameSection docRef={snapshot.ref} defaultValue={data.name} />
+      <LangSection docRef={snapshot.ref} defaultValue={data.lang} />
       <TagsSection docRef={snapshot.ref} defaultValue={data.tags} />
-      {data.tags.indexOf('DB') > -1 && url && (
-        <ComponentEditor className="border-t pt-4" src={url} soundDocId={docId} collectionId="dbKomponenten" />
+      {url && (
+        <ComponentSection
+          docRef={snapshot.ref}
+          defaultValue={{ start: data.start, end: data.end }}
+          url={url}
+          soundDocId={data.soundDocId}
+        />
       )}
     </div>
   );
 };
 
-const TitleSection: React.FC<{
-  docRef: DocumentReference<Sound>;
-  defaultValue: Sound['title'];
+const NameSection: React.FC<{
+  docRef: DocumentReference<Component>;
+  defaultValue: Component['name'];
 }> = ({ docRef, defaultValue }) => {
   const [value, setValue] = useState(defaultValue || '');
 
   const updateValue = useMemo(
     () =>
-      debounce((title: string) => {
+      debounce((name: string) => {
         updateDoc(docRef, {
-          title,
+          name,
         });
       }, 1000),
     [docRef]
@@ -108,7 +101,7 @@ const TitleSection: React.FC<{
 
   return (
     <div>
-      <p className="mb-1 text-xs font-bold">Title</p>
+      <p className="mb-1 text-xs font-bold">Name</p>
       <input
         className="w-full resize-none p-2 text-sm"
         value={value}
@@ -121,53 +114,40 @@ const TitleSection: React.FC<{
   );
 };
 
-const TextByManualSection: React.FC<{
-  docRef: DocumentReference<Sound>;
-  defaultValue: Sound['textByManual'];
+const LangSection: React.FC<{
+  docRef: DocumentReference<Component>;
+  defaultValue: Component['lang'];
 }> = ({ docRef, defaultValue }) => {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [value, setValue] = useState(defaultValue || '');
 
   const updateValue = useMemo(
     () =>
-      debounce((textByManual: string) => {
+      debounce((lang: string) => {
         updateDoc(docRef, {
-          textByManual: textByManual || null,
+          lang,
         });
       }, 1000),
     [docRef]
   );
 
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = '0';
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-    }
-  }, [textareaRef]);
-
   return (
     <div>
-      <p className="mb-1 text-xs font-bold">Text By Manual</p>
-      <textarea
-        ref={textareaRef}
-        className="min-h-[1px] w-full resize-none p-2 text-sm"
+      <p className="mb-1 text-xs font-bold">Lang</p>
+      <input
+        className="w-full resize-none p-2 text-sm"
         value={value}
         onInput={(e) => {
           setValue(e.currentTarget.value);
           updateValue(e.currentTarget.value);
-          if (textareaRef.current) {
-            textareaRef.current.style.height = '0';
-            textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-          }
         }}
-      ></textarea>
+      />
     </div>
   );
 };
 
 const TagsSection: React.FC<{
-  docRef: DocumentReference<Sound>;
-  defaultValue: Sound['tags'];
+  docRef: DocumentReference<Component>;
+  defaultValue: Component['tags'];
 }> = ({ docRef, defaultValue }) => {
   const [value, setValue] = useState(defaultValue);
 
@@ -192,5 +172,35 @@ const TagsSection: React.FC<{
         }}
       />
     </div>
+  );
+};
+
+const ComponentSection: React.FC<{
+  docRef: DocumentReference<Component>;
+  defaultValue: Range;
+  url: string;
+  soundDocId: string;
+}> = ({ docRef, defaultValue, url, soundDocId }) => {
+  const updateValue = useMemo(
+    () =>
+      debounce(({ start, end }: Range) => {
+        updateDoc(docRef, {
+          start,
+          end,
+        });
+      }, 1000),
+    [docRef]
+  );
+
+  return (
+    <ComponentEditor
+      className="border-t pt-4"
+      src={url}
+      soundDocId={soundDocId}
+      collectionId="dbKomponenten"
+      readonly
+      defaultRange={{ start: defaultValue.start, end: defaultValue.end }}
+      onChangeRange={updateValue}
+    />
   );
 };
