@@ -2,8 +2,6 @@ import classNames from 'classnames';
 import {
   collection,
   CollectionReference,
-  deleteDoc,
-  doc,
   getDocs,
   limit,
   orderBy,
@@ -14,11 +12,13 @@ import {
 import type { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FileCard } from '../components/FileCard';
 import { TagItemCard } from '../components/TagItemCard';
-import { firestore } from '../libs/firebase/index';
-import { Sound, SoundTag } from '../types/sound';
+import { useEffectOnce } from '../hooks/useEffectOnce';
+import { useTags } from '../hooks/useTags';
+import { firestore } from '../libs/firebase';
+import { Sound } from '../types/sound';
 
 const collectionId = 'sounds';
 
@@ -32,23 +32,8 @@ const fetchDocs = async (tag: string | null): Promise<QueryDocumentSnapshot<Soun
   return querySnapshot.docs;
 };
 
-const fetchTags = async (): Promise<string[]> => {
-  const c = collection(doc(collection(firestore, collectionId), 'tags'), 'tags') as CollectionReference<SoundTag>;
-  const querySnapshot = await getDocs(c);
-  return querySnapshot.docs.map((doc) => doc.get('name') as string);
-};
-
 const Page: NextPage = () => {
   const router = useRouter();
-  const tag = useMemo(() => {
-    if (!('tag' in router.query) || !router.query.tag) {
-      return null;
-    }
-    if (Array.isArray(router.query.tag)) {
-      return router.query.tag[0];
-    }
-    return router.query.tag;
-  }, [router]);
   const soundDocId = useMemo(() => {
     if (!('sound' in router.query) || !router.query.sound) {
       return null;
@@ -60,7 +45,7 @@ const Page: NextPage = () => {
   }, [router]);
 
   const [docs, setDocs] = useState<QueryDocumentSnapshot<Sound>[]>([]);
-  const [tags, setTags] = useState<string[]>([]);
+  const { tags, currentTag, fetchTags, deleteTag } = useTags(collectionId);
 
   useEffect(() => {
     if (!router.isReady) {
@@ -68,25 +53,14 @@ const Page: NextPage = () => {
     }
 
     setDocs([]);
-    fetchDocs(tag).then((docs) => {
+    fetchDocs(currentTag).then((docs) => {
       setDocs(docs);
     });
-  }, [router.isReady, tag]);
+  }, [router.isReady, currentTag, fetchTags]);
 
   useEffect(() => {
-    if (!router.isReady) {
-      return;
-    }
-
-    setTags([]);
-    fetchTags().then((tags) => {
-      setTags(tags);
-    });
-  }, [router.isReady]);
-
-  const deleteTag = useCallback((tag: string) => {
-    deleteDoc(doc(collection(doc(collection(firestore, collectionId), 'tags'), 'tags'), tag));
-  }, []);
+    fetchTags();
+  }, [fetchTags]);
 
   return (
     <div className="grid h-full grid-cols-[240px_400px_1fr] overflow-hidden">
@@ -95,20 +69,24 @@ const Page: NextPage = () => {
         <ul>
           {['ALL', ...tags].map((_tag) => (
             <li key={_tag} className="after:mx-2 after:block after:h-[1px] after:bg-current after:content-['']">
-              <TagItemCard tag={_tag} isCurrent={_tag !== 'ALL' ? _tag === tag : !tag} />
+              <TagItemCard
+                collectionId={collectionId}
+                tag={_tag}
+                isCurrent={_tag !== 'ALL' ? _tag === currentTag : !currentTag}
+              />
             </li>
           ))}
         </ul>
       </div>
       {/* Sound */}
       <div className="flex h-full flex-col overflow-y-auto border-r pb-10">
-        {tag && (
+        {currentTag && (
           <div className="sticky top-0 border-b bg-black p-4">
-            <p>{tag}</p>
+            <p>{currentTag}</p>
             <button
               className="absolute right-4 top-4 rounded border px-2 text-sm"
               onClick={() => {
-                deleteTag(tag);
+                deleteTag(currentTag);
               }}
             >
               Delete
@@ -137,7 +115,7 @@ const Page: NextPage = () => {
                   <ul className="flex flex-wrap gap-2">
                     {doc
                       .data()
-                      .tags.filter((_tag) => tag !== _tag)
+                      .tags.filter((_tag) => currentTag !== _tag)
                       .map((tag) => (
                         <li key={tag}>
                           <p className="text-xs">

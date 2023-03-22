@@ -6,8 +6,8 @@ import { useEffect, useState } from 'react';
 import { firestore } from '../libs/firebase';
 import { Sound } from '../types/sound';
 
-const fetchTagCount = async (tag: string): Promise<number> => {
-  const c = collection(firestore, 'sounds') as CollectionReference<Sound>;
+const fetchTagCount = async (collectionId: string, tag: string): Promise<number> => {
+  const c = collection(firestore, collectionId) as CollectionReference<Sound>;
   const q = query(c, where('tags', 'array-contains', tag));
 
   const count = await getCountFromServer(q);
@@ -16,11 +16,12 @@ const fetchTagCount = async (tag: string): Promise<number> => {
 
 export type TagItemCardProps = {
   className?: string;
+  collectionId: string;
   tag: string;
   isCurrent: boolean;
 };
 
-export const TagItemCard: React.FC<TagItemCardProps> = ({ className, tag, isCurrent }) => {
+export const TagItemCard: React.FC<TagItemCardProps> = ({ className, collectionId, tag, isCurrent }) => {
   const router = useRouter();
 
   const [count, setCount] = useState(-1);
@@ -35,10 +36,10 @@ export const TagItemCard: React.FC<TagItemCardProps> = ({ className, tag, isCurr
     }
 
     setCount(-1);
-    fetchTagCount(tag).then((cound) => {
+    fetchTagCount(collectionId, tag).then((cound) => {
       setCount(cound);
     });
-  }, [router.isReady, tag]);
+  }, [router.isReady, collectionId, tag]);
 
   return (
     <Link
