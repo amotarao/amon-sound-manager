@@ -3,6 +3,5 @@ export type Component = {
   start: number;
   end: number;
   name: string;
-  lang: string;
   tags: string[];
 };

@@ -69,7 +69,6 @@ export const ComponentCard: React.FC<ComponentCardProps> = ({ className = '', co
         <p className="text-xs">ID: {docId}</p>
       </div>
       <NameSection docRef={snapshot.ref} defaultValue={data.name} />
-      <LangSection docRef={snapshot.ref} defaultValue={data.lang} />
       <TagsSection docRef={snapshot.ref} defaultValue={data.tags} />
       {url && (
         <ComponentSection
@@ -102,37 +101,6 @@ const NameSection: React.FC<{
   return (
     <div>
       <p className="mb-1 text-xs font-bold">Name</p>
-      <input
-        className="w-full resize-none p-2 text-sm"
-        value={value}
-        onInput={(e) => {
-          setValue(e.currentTarget.value);
-          updateValue(e.currentTarget.value);
-        }}
-      />
-    </div>
-  );
-};
-
-const LangSection: React.FC<{
-  docRef: DocumentReference<Component>;
-  defaultValue: Component['lang'];
-}> = ({ docRef, defaultValue }) => {
-  const [value, setValue] = useState(defaultValue || '');
-
-  const updateValue = useMemo(
-    () =>
-      debounce((lang: string) => {
-        updateDoc(docRef, {
-          lang,
-        });
-      }, 1000),
-    [docRef]
-  );
-
-  return (
-    <div>
-      <p className="mb-1 text-xs font-bold">Lang</p>
       <input
         className="w-full resize-none p-2 text-sm"
         value={value}

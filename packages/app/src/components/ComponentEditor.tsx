@@ -5,6 +5,7 @@ import WaveSurfer from 'wavesurfer.js';
 import RegionsPlugin, { Region } from 'wavesurfer.js/src/plugin/regions';
 import { firestore } from '../libs/firebase';
 import { Component } from '../types/component';
+import { TagEditor } from './TagEditor';
 
 export type Range = {
   start: number;
@@ -40,7 +41,7 @@ export const ComponentEditor: React.FC<ComponentEditorProps> = ({
   const [range, setRange] = useState(defaultRange || { start: 0, end: 1 });
 
   const [name, setName] = useState('');
-  const [lang, setLang] = useState('');
+  const [tags, setTags] = useState<string[]>([]);
 
   useEffect(() => {
     if (!audioRef.current || !containerRef.current) {
@@ -137,14 +138,8 @@ export const ComponentEditor: React.FC<ComponentEditorProps> = ({
             />
           </div>
           <div>
-            <p className="mb-1 text-xs font-bold">Lang</p>
-            <input
-              className="w-full resize-none p-2 text-sm"
-              value={lang}
-              onInput={(e) => {
-                setLang(e.currentTarget.value);
-              }}
-            />
+            <p className="mb-1 text-xs font-bold">Tags</p>
+            <TagEditor defaultValue={[]} onChange={setTags} />
           </div>
           <div>
             <button
@@ -155,8 +150,7 @@ export const ComponentEditor: React.FC<ComponentEditorProps> = ({
                   start: range.start,
                   end: range.end,
                   name,
-                  lang,
-                  tags: [],
+                  tags,
                 };
                 addDoc(collection(firestore, collectionId), data);
               }}
