@@ -1,6 +1,6 @@
 import { collection, CollectionReference, deleteDoc, doc, getDocs } from 'firebase/firestore';
 import { useRouter } from 'next/router';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { firestore } from '../libs/firebase';
 import { SoundTag } from '../types/sound';
 
@@ -8,16 +8,22 @@ export const useTags = (collectionId: string) => {
   const router = useRouter();
 
   const [tags, setTags] = useState<string[]>([]);
+  const [currentTags, setCurrentTags] = useState<string[]>([]);
 
-  const currentTag = useMemo(() => {
-    if (!('tag' in router.query) || !router.query.tag) {
-      return null;
+  useEffect(() => {
+    if (!router.query.tag) {
+      const tags: string[] = [];
+      JSON.stringify(currentTags) !== JSON.stringify(tags) && setCurrentTags(tags);
+      return;
     }
     if (Array.isArray(router.query.tag)) {
-      return router.query.tag[0];
+      const tags = router.query.tag;
+      JSON.stringify(currentTags) !== JSON.stringify(tags) && setCurrentTags(tags);
+      return;
     }
-    return router.query.tag;
-  }, [router]);
+    const tags = [router.query.tag];
+    JSON.stringify(currentTags) !== JSON.stringify(tags) && setCurrentTags(tags);
+  }, [router.query.tag, currentTags]);
 
   const fetchTags = useCallback(async () => {
     setTags([]);
@@ -36,7 +42,7 @@ export const useTags = (collectionId: string) => {
 
   return {
     tags,
-    currentTag,
+    currentTags,
     fetchTags,
     deleteTag,
   };

@@ -2,7 +2,8 @@ import classNames from 'classnames';
 import { collection, CollectionReference, getCountFromServer, query, where } from 'firebase/firestore';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useTags } from '../hooks/useTags';
 import { firestore } from '../libs/firebase';
 import { Sound } from '../types/sound';
 
@@ -19,12 +20,30 @@ export type TagItemCardProps = {
   collectionId: string;
   tag: string;
   isCurrent: boolean;
+  mode?: 'multiple';
 };
 
-export const TagItemCard: React.FC<TagItemCardProps> = ({ className, collectionId, tag, isCurrent }) => {
+export const TagItemCard: React.FC<TagItemCardProps> = ({ className, collectionId, tag, isCurrent, mode }) => {
   const router = useRouter();
+  const { currentTags } = useTags(collectionId);
 
   const [count, setCount] = useState(-1);
+
+  const tagQuery = useMemo((): string[] | undefined => {
+    if (tag === 'ALL') {
+      return undefined;
+    }
+
+    if (mode !== 'multiple') {
+      return [tag];
+    }
+
+    if (currentTags.includes(tag)) {
+      return currentTags.filter((_tag) => _tag !== tag);
+    }
+
+    return [...currentTags, tag];
+  }, [tag, mode, currentTags]);
 
   useEffect(() => {
     if (!router.isReady) {
@@ -48,7 +67,7 @@ export const TagItemCard: React.FC<TagItemCardProps> = ({ className, collectionI
         isCurrent ? 'bg-neutral-300 dark:bg-neutral-700' : null,
         className
       )}
-      href={{ href: '/', query: { ...router.query, tag: tag !== 'ALL' ? tag : undefined } }}
+      href={{ href: '/', query: { ...router.query, tag: tagQuery } }}
     >
       <p>
         <span className="mr-0.5">#</span>

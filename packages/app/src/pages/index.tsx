@@ -15,18 +15,19 @@ import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { FileCard } from '../components/FileCard';
 import { TagItemCard } from '../components/TagItemCard';
-import { useEffectOnce } from '../hooks/useEffectOnce';
 import { useTags } from '../hooks/useTags';
 import { firestore } from '../libs/firebase';
 import { Sound } from '../types/sound';
 
 const collectionId = 'sounds';
 
-const fetchDocs = async (tag: string | null): Promise<QueryDocumentSnapshot<Sound>[]> => {
+const fetchDocs = async (tags: string[]): Promise<QueryDocumentSnapshot<Sound>[]> => {
   const c = collection(firestore, collectionId) as CollectionReference<Sound>;
   let q = query(c, orderBy('file.name'));
-  q = query(q, limit(tag ? 1000 : 30));
-  if (tag) q = query(q, where('tags', 'array-contains', tag));
+  q = query(q, limit(tags ? 1000 : 30));
+  if (tags.length) {
+    q = query(q, where('tags', 'array-contains-any', tags));
+  }
 
   const querySnapshot = await getDocs(q);
   return querySnapshot.docs;
@@ -45,7 +46,7 @@ const Page: NextPage = () => {
   }, [router]);
 
   const [docs, setDocs] = useState<QueryDocumentSnapshot<Sound>[]>([]);
-  const { tags, currentTag, fetchTags, deleteTag } = useTags(collectionId);
+  const { tags, currentTags, fetchTags, deleteTag } = useTags(collectionId);
 
   useEffect(() => {
     if (!router.isReady) {
@@ -53,10 +54,10 @@ const Page: NextPage = () => {
     }
 
     setDocs([]);
-    fetchDocs(currentTag).then((docs) => {
+    fetchDocs(currentTags).then((docs) => {
       setDocs(docs);
     });
-  }, [router.isReady, currentTag, fetchTags]);
+  }, [router.isReady, currentTags, fetchTags]);
 
   useEffect(() => {
     fetchTags();
@@ -72,7 +73,7 @@ const Page: NextPage = () => {
               <TagItemCard
                 collectionId={collectionId}
                 tag={_tag}
-                isCurrent={_tag !== 'ALL' ? _tag === currentTag : !currentTag}
+                isCurrent={_tag !== 'ALL' ? currentTags.includes(_tag) : !currentTags.length}
               />
             </li>
           ))}
@@ -80,21 +81,26 @@ const Page: NextPage = () => {
       </div>
       {/* Sound */}
       <div className="flex h-full flex-col overflow-y-auto border-r pb-10">
-        {currentTag && (
+        {currentTags.length > 0 && (
           <div className="sticky top-0 border-b bg-black p-4">
-            <p>{currentTag}</p>
-            <button
-              className="absolute right-4 top-4 rounded border px-2 text-sm"
-              onClick={() => {
-                deleteTag(currentTag);
-              }}
-            >
-              Delete
-            </button>
+            {currentTags.map((tag) => (
+              <div key={tag} className="flex">
+                <p className="shrink grow">{tag}</p>
+                <button
+                  className="shrink-0 rounded border px-2 text-sm"
+                  onClick={() => {
+                    deleteTag(tag);
+                  }}
+                >
+                  Delete
+                </button>
+              </div>
+            ))}
           </div>
         )}
         <ul>
           {docs
+            .filter((doc) => currentTags.every((tag) => doc.data().tags.includes(tag)))
             .sort((a, z) => {
               const aTitle = a.data().title || '';
               const zTitle = z.data().title || '';
@@ -115,7 +121,7 @@ const Page: NextPage = () => {
                   <ul className="flex flex-wrap gap-2">
                     {doc
                       .data()
-                      .tags.filter((_tag) => currentTag !== _tag)
+                      .tags.filter((_tag) => !currentTags.includes(_tag))
                       .map((tag) => (
                         <li key={tag}>
                           <p className="text-xs">
