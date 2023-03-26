@@ -16,7 +16,7 @@ import { SoundPreviewCard } from '../components/SoundPreviewCard';
 import { TagItemCard } from '../components/TagItemCard';
 import { useTags } from '../hooks/useTags';
 import { firestore } from '../libs/firebase';
-import { sortByRetake, sortByTitle } from '../libs/sound/utils/sort';
+import { sortByArchived, sortByRetake, sortByTitle } from '../libs/sound/utils/sort';
 import { Sound } from '../types/sound';
 
 const collectionId = 'sounds';
@@ -102,7 +102,7 @@ const Page: NextPage = () => {
           <ul>
             {docs
               .filter((doc) => currentTags.every((tag) => doc.data().tags.includes(tag)))
-              .sort((a, z) => sortByRetake(a, z) || sortByTitle(a, z))
+              .sort((a, z) => sortByArchived(a, z) || sortByRetake(a, z) || sortByTitle(a, z))
               .map((doc) => (
                 <li key={doc.id} className="after:mx-2 after:block after:h-[1px] after:bg-current after:content-['']">
                   <SoundPreviewCard doc={doc} currentSound={soundDocId || undefined} currentTags={currentTags} />

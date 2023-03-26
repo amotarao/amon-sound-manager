@@ -1,6 +1,6 @@
 import { QueryDocumentSnapshot } from 'firebase/firestore';
 import { Sound } from '../../../types/sound';
-import { retakeTag } from '../constants';
+import { archivedTag, retakeTag } from '../constants';
 
 export const sortByTitle = (a: QueryDocumentSnapshot<Sound>, z: QueryDocumentSnapshot<Sound>): number => {
   const aTitle = a.data().title || '';
@@ -14,4 +14,11 @@ export const sortByRetake = (a: QueryDocumentSnapshot<Sound>, z: QueryDocumentSn
   const zHasTag = z.data().tags.includes(retakeTag);
 
   return aHasTag && !zHasTag ? -1 : !aHasTag && zHasTag ? 1 : 0;
+};
+
+export const sortByArchived = (a: QueryDocumentSnapshot<Sound>, z: QueryDocumentSnapshot<Sound>): number => {
+  const aHasTag = a.data().tags.includes(archivedTag);
+  const zHasTag = z.data().tags.includes(archivedTag);
+
+  return aHasTag && !zHasTag ? 1 : !aHasTag && zHasTag ? -1 : 0;
 };
