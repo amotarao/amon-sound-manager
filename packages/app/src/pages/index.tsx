@@ -17,6 +17,8 @@ import { FileCard } from '../components/FileCard';
 import { TagItemCard } from '../components/TagItemCard';
 import { useTags } from '../hooks/useTags';
 import { firestore } from '../libs/firebase';
+import { retakeTag } from '../libs/sound/constants';
+import { sortByRetake, sortByTitle } from '../libs/sound/utils/sort';
 import { Sound } from '../types/sound';
 
 const collectionId = 'sounds';
@@ -102,12 +104,7 @@ const Page: NextPage = () => {
           <ul>
             {docs
               .filter((doc) => currentTags.every((tag) => doc.data().tags.includes(tag)))
-              .sort((a, z) => {
-                const aTitle = a.data().title || '';
-                const zTitle = z.data().title || '';
-
-                return aTitle > zTitle ? 1 : aTitle === zTitle ? 0 : -1;
-              })
+              .sort((a, z) => sortByRetake(a, z) || sortByTitle(a, z))
               .map((doc) => (
                 <li key={doc.id} className="after:mx-2 after:block after:h-[1px] after:bg-current after:content-['']">
                   <Link
@@ -117,7 +114,10 @@ const Page: NextPage = () => {
                     )}
                     href={{ href: '/', query: { ...router.query, sound: doc.id } }}
                   >
-                    <p className="text-sm">{doc.data().title}</p>
+                    <p className="text-sm">
+                      {doc.data().tags.includes(retakeTag) && <span>△ </span>}
+                      <span>{doc.data().title}</span>
+                    </p>
                     <p className="text-xs">{doc.data().file.name}</p>
                     <ul className="flex flex-wrap gap-2">
                       {doc
