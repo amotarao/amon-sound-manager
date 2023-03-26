@@ -1,37 +1,12 @@
-import {
-  collection,
-  CollectionReference,
-  getDocs,
-  limit,
-  orderBy,
-  query,
-  QueryDocumentSnapshot,
-  where,
-} from 'firebase/firestore';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { FileCard } from '../components/FileCard';
-import { SoundPreviewCard } from '../components/SoundPreviewCard';
+import { SoundPreviewList } from '../components/SoundPreviewList';
 import { TagItemCard } from '../components/TagItemCard';
 import { useTags } from '../hooks/useTags';
-import { firestore } from '../libs/firebase';
-import { sortByArchived, sortByRetake, sortByTitle } from '../libs/sound/utils/sort';
-import { Sound } from '../types/sound';
 
 const collectionId = 'sounds';
-
-const fetchDocs = async (tags: string[]): Promise<QueryDocumentSnapshot<Sound>[]> => {
-  const c = collection(firestore, collectionId) as CollectionReference<Sound>;
-  let q = query(c, orderBy('file.name'));
-  q = query(q, limit(tags ? 1000 : 30));
-  if (tags.length) {
-    q = query(q, where('tags', 'array-contains-any', tags));
-  }
-
-  const querySnapshot = await getDocs(q);
-  return querySnapshot.docs;
-};
 
 const Page: NextPage = () => {
   const router = useRouter();
@@ -45,20 +20,7 @@ const Page: NextPage = () => {
     return router.query.sound;
   }, [router]);
 
-  const [docs, setDocs] = useState<QueryDocumentSnapshot<Sound>[]>([]);
   const { tags, currentTags, fetchTags, deleteTag } = useTags(collectionId);
-
-  useEffect(() => {
-    if (!router.isReady) {
-      return;
-    }
-
-    setDocs([]);
-    fetchDocs(currentTags).then((docs) => {
-      setDocs(docs);
-    });
-  }, [router.isReady, currentTags, fetchTags]);
-
   useEffect(() => {
     fetchTags();
   }, [fetchTags]);
@@ -99,16 +61,7 @@ const Page: NextPage = () => {
               ))}
             </div>
           )}
-          <ul>
-            {docs
-              .filter((doc) => currentTags.every((tag) => doc.data().tags.includes(tag)))
-              .sort((a, z) => sortByArchived(a, z) || sortByRetake(a, z) || sortByTitle(a, z))
-              .map((doc) => (
-                <li key={doc.id} className="after:mx-2 after:block after:h-[1px] after:bg-current after:content-['']">
-                  <SoundPreviewCard doc={doc} currentSound={soundDocId || undefined} currentTags={currentTags} />
-                </li>
-              ))}
-          </ul>
+          <SoundPreviewList currentSound={soundDocId || undefined} currentTags={currentTags} />
         </div>
         {/* Detail */}
         <div className="flex h-full flex-col gap-4 overflow-y-auto">
