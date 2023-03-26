@@ -36,12 +36,12 @@ export const SoundPreviewCard: React.FC<SoundPreviewCardProps> = ({ className, d
     >
       {title ? (
         <p className="text-sm">
-          {isRetake && <span aria-label={retakeName}>△ </span>}
+          {isRetake && <RetakeLabel className="mr-1" />}
           <span>{title}</span>
         </p>
       ) : (
         <>
-          <p className="text-sm">{isRetake && <span aria-label={retakeName}>△ </span>}</p>
+          <p className="text-sm">{isRetake && <RetakeLabel />}</p>
           <p className="text-xs">{doc.data().file.name}</p>
         </>
       )}
@@ -56,5 +56,15 @@ export const SoundPreviewCard: React.FC<SoundPreviewCardProps> = ({ className, d
         ))}
       </ul>
     </Link>
+  );
+};
+
+const RetakeLabel: React.FC<{
+  className?: string;
+}> = ({ className }) => {
+  return (
+    <span className={classNames('rounded-sm bg-white px-1 text-xs text-black', className)} aria-label={retakeName}>
+      ▲
+    </span>
   );
 };
