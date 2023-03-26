@@ -1,15 +1,16 @@
 import {
   collection,
   CollectionReference,
-  getDocs,
   limit,
+  onSnapshot,
   orderBy,
+  Query,
   query,
   QueryDocumentSnapshot,
   where,
 } from 'firebase/firestore';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { firestore } from '../libs/firebase';
 import { sortByArchived, sortByRetake, sortByTitle } from '../libs/sound/utils/sort';
 import { Sound } from '../types/sound';
@@ -17,16 +18,14 @@ import { SoundPreviewCard } from './SoundPreviewCard';
 
 const collectionId = 'sounds';
 
-const fetchDocs = async (tags: string[]): Promise<QueryDocumentSnapshot<Sound>[]> => {
+const getQuery = (tags: string[]): Query<Sound> => {
   const c = collection(firestore, collectionId) as CollectionReference<Sound>;
   let q = query(c, orderBy('file.name'));
   q = query(q, limit(tags ? 1000 : 30));
   if (tags.length) {
     q = query(q, where('tags', 'array-contains-any', tags));
   }
-
-  const querySnapshot = await getDocs(q);
-  return querySnapshot.docs;
+  return q;
 };
 
 export type SoundPreviewListProps = {
@@ -39,16 +38,21 @@ export const SoundPreviewList: React.FC<SoundPreviewListProps> = ({ className, c
   const router = useRouter();
 
   const [docs, setDocs] = useState<QueryDocumentSnapshot<Sound>[]>([]);
+  const query = useMemo(() => getQuery(currentTags || []), [currentTags]);
   useEffect(() => {
     if (!router.isReady) {
       return;
     }
 
     setDocs([]);
-    fetchDocs(currentTags || []).then((docs) => {
-      setDocs(docs);
+    const unsubscribe = onSnapshot(query, (querySnapshot) => {
+      setDocs(querySnapshot.docs);
     });
-  }, [router.isReady, currentTags]);
+
+    return () => {
+      unsubscribe();
+    };
+  }, [router.isReady, query]);
 
   if (docs.length === 0) {
     return null;
