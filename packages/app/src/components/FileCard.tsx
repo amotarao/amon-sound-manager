@@ -3,9 +3,10 @@ import { deleteDoc, doc, DocumentReference, DocumentSnapshot, onSnapshot, update
 import { getDownloadURL, ref } from 'firebase/storage';
 import { debounce } from 'lodash';
 import dynamic from 'next/dynamic';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { firestore, storage } from '../libs/firebase';
 import { Sound } from '../types/sound';
+import { ResizableTextarea } from './ResizableTextarea';
 import { TagEditor } from './TagEditor';
 
 const ComponentEditor = dynamic(() => import('./ComponentEditor').then((file) => file.ComponentEditor), {
@@ -126,7 +127,6 @@ const TextByManualSection: React.FC<{
   docRef: DocumentReference<Sound>;
   defaultValue: Sound['textByManual'];
 }> = ({ docRef, defaultValue }) => {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [value, setValue] = useState(defaultValue || '');
 
   const updateValue = useMemo(
@@ -139,29 +139,17 @@ const TextByManualSection: React.FC<{
     [docRef]
   );
 
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = '0';
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-    }
-  }, [textareaRef]);
-
   return (
     <div>
       <p className="mb-1 text-xs font-bold">Text By Manual</p>
-      <textarea
-        ref={textareaRef}
+      <ResizableTextarea
         className="min-h-[1px] w-full resize-none p-2 text-sm"
         value={value}
         onInput={(e) => {
           setValue(e.currentTarget.value);
           updateValue(e.currentTarget.value);
-          if (textareaRef.current) {
-            textareaRef.current.style.height = '0';
-            textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-          }
         }}
-      ></textarea>
+      />
     </div>
   );
 };
