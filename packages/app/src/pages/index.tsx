@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import {
   collection,
   CollectionReference,
@@ -10,14 +9,13 @@ import {
   where,
 } from 'firebase/firestore';
 import type { NextPage } from 'next';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { FileCard } from '../components/FileCard';
+import { SoundPreviewCard } from '../components/SoundPreviewCard';
 import { TagItemCard } from '../components/TagItemCard';
 import { useTags } from '../hooks/useTags';
 import { firestore } from '../libs/firebase';
-import { retakeName, retakeTag } from '../libs/sound/constants';
 import { sortByRetake, sortByTitle } from '../libs/sound/utils/sort';
 import { Sound } from '../types/sound';
 
@@ -107,32 +105,7 @@ const Page: NextPage = () => {
               .sort((a, z) => sortByRetake(a, z) || sortByTitle(a, z))
               .map((doc) => (
                 <li key={doc.id} className="after:mx-2 after:block after:h-[1px] after:bg-current after:content-['']">
-                  <Link
-                    className={classNames(
-                      'grid grid-rows-1 gap-1 px-4 py-2',
-                      soundDocId === doc.id && 'bg-neutral-300 dark:bg-neutral-700'
-                    )}
-                    href={{ href: '/', query: { ...router.query, sound: doc.id } }}
-                  >
-                    <p className="text-sm">
-                      {doc.data().tags.includes(retakeTag) && <span aria-label={retakeName}>△ </span>}
-                      <span>{doc.data().title}</span>
-                    </p>
-                    <p className="text-xs">{doc.data().file.name}</p>
-                    <ul className="flex flex-wrap gap-2">
-                      {doc
-                        .data()
-                        .tags.filter((_tag) => !currentTags.includes(_tag))
-                        .map((tag) => (
-                          <li key={tag}>
-                            <p className="text-xs">
-                              <span className="mr-0.5">#</span>
-                              {tag}
-                            </p>
-                          </li>
-                        ))}
-                    </ul>
-                  </Link>
+                  <SoundPreviewCard doc={doc} currentSound={soundDocId || undefined} currentTags={currentTags} />
                 </li>
               ))}
           </ul>
