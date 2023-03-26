@@ -32,7 +32,7 @@ const Page: NextPage = () => {
         <div className="flex h-full flex-col overflow-y-auto border-r pb-10">
           <ul>
             {['ALL', ...tags].map((_tag) => (
-              <li key={_tag} className="after:mx-2 after:block after:h-[1px] after:bg-current after:content-['']">
+              <li key={_tag} className="after:mx-4 after:block after:h-[1px] after:bg-current after:content-['']">
                 <TagItemCard
                   collectionId={collectionId}
                   tag={_tag}

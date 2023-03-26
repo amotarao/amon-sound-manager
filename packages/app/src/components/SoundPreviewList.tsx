@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import {
   collection,
   CollectionReference,
@@ -12,7 +13,8 @@ import {
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { firestore } from '../libs/firebase';
-import { sortByArchived, sortByRetake, sortByTitle } from '../libs/sound/utils/sort';
+import { archivedTag } from '../libs/sound/constants';
+import { sortByRetake, sortByTitle } from '../libs/sound/utils/sort';
 import { Sound } from '../types/sound';
 import { SoundPreviewCard } from './SoundPreviewCard';
 
@@ -46,28 +48,62 @@ export const SoundPreviewList: React.FC<SoundPreviewListProps> = ({ className, c
 
     setDocs([]);
     const unsubscribe = onSnapshot(query, (querySnapshot) => {
-      setDocs(querySnapshot.docs);
+      setDocs(
+        querySnapshot.docs
+          .filter((doc) => currentTags?.every((tag) => doc.data().tags.includes(tag)))
+          .sort((a, z) => sortByRetake(a, z) || sortByTitle(a, z))
+      );
     });
 
     return () => {
       unsubscribe();
     };
-  }, [router.isReady, query]);
+  }, [router.isReady, query, currentTags]);
 
+  return (
+    <div className={classNames('grid grid-cols-1 gap-4', className)}>
+      <List
+        docs={docs.filter((doc) => !doc.data().tags.includes(archivedTag))}
+        currentSound={currentSound}
+        currentTags={currentTags}
+      />
+      <List
+        cardClassName="opacity-70"
+        title="アーカイブ済み"
+        docs={docs.filter((doc) => doc.data().tags.includes(archivedTag))}
+        currentSound={currentSound}
+        currentTags={currentTags}
+      />
+    </div>
+  );
+};
+
+const List: React.FC<
+  {
+    cardClassName?: string;
+    title?: string;
+    docs: QueryDocumentSnapshot<Sound>[];
+  } & Pick<SoundPreviewListProps, 'currentSound' | 'currentTags'>
+> = ({ cardClassName, title, docs, currentSound, currentTags }) => {
   if (docs.length === 0) {
     return null;
   }
 
   return (
-    <ul className={className}>
-      {docs
-        .filter((doc) => currentTags?.every((tag) => doc.data().tags.includes(tag)))
-        .sort((a, z) => sortByArchived(a, z) || sortByRetake(a, z) || sortByTitle(a, z))
-        .map((doc) => (
-          <li key={doc.id} className="after:mx-2 after:block after:h-[1px] after:bg-current after:content-['']">
-            <SoundPreviewCard doc={doc} currentSound={currentSound} currentTags={currentTags} />
+    <div>
+      {title && <p className="mx-4 border-b py-2 text-xs font-bold">{title}</p>}
+      <ul>
+        {docs.map((doc) => (
+          <li key={doc.id} className="after:mx-4 after:block after:h-[1px] after:bg-current after:content-['']">
+            <SoundPreviewCard
+              className={cardClassName}
+              doc={doc}
+              currentSound={currentSound}
+              currentTags={currentTags}
+            />
           </li>
         ))}
-    </ul>
+      </ul>
+    </div>
   );
 };

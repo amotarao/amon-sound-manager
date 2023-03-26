@@ -8,6 +8,7 @@ import { Sound } from '../types/sound';
 
 export type SoundPreviewCardProps = {
   className?: string;
+  cardClassName?: string;
   doc: QueryDocumentSnapshot<Sound>;
   currentSound?: string;
   currentTags?: string[];
@@ -19,7 +20,6 @@ export const SoundPreviewCard: React.FC<SoundPreviewCardProps> = ({ className, d
   const title = useMemo(() => doc.data().title, [doc]);
   const tags = useMemo(() => doc.data().tags, [doc]);
   const isRetake = useMemo(() => tags.includes(retakeTag), [tags]);
-  const isArchived = useMemo(() => tags.includes(archivedTag), [tags]);
   const viewTags = useMemo(
     () => tags.filter((_tag) => !currentTags?.includes(_tag) && _tag !== retakeTag && _tag !== archivedTag),
     [tags, currentTags]
@@ -30,7 +30,6 @@ export const SoundPreviewCard: React.FC<SoundPreviewCardProps> = ({ className, d
       className={classNames(
         'grid grid-rows-1 gap-1 px-4 py-2',
         currentSound === doc.id && 'bg-neutral-300 dark:bg-neutral-700',
-        isArchived && 'opacity-70',
         className
       )}
       href={{ href: '/', query: { ...router.query, sound: doc.id } }}
