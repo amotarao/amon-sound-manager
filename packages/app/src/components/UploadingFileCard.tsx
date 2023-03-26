@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { doc, setDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable } from 'firebase/storage';
 import { useState } from 'react';
@@ -62,7 +63,7 @@ export const UploadingFileCard: React.FC<UploadingFileCardProps> = ({
   });
 
   return (
-    <div className={`${className} flex gap-2`}>
+    <div className={classNames('flex gap-2', className)}>
       <p>[{uid}]</p>
       <p>{file.name}</p>
       <p>{state}</p>

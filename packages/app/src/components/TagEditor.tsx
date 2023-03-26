@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { useCallback, useState } from 'react';
 import { useInputComposition } from '../hooks/useInputComposition';
 
@@ -51,7 +52,7 @@ export const TagEditor: React.FC<TagEditorProps> = ({
   );
 
   return (
-    <div className={`${className} flex flex-wrap gap-2 rounded border p-2`}>
+    <div className={classNames('flex flex-wrap gap-2 rounded border p-2', className)}>
       <ul className="flex flex-wrap gap-2">
         {tags.map((tag) => (
           <li key={tag}>

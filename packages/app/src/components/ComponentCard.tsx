@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { deleteDoc, doc, DocumentReference, DocumentSnapshot, onSnapshot, updateDoc } from 'firebase/firestore';
 import { getDownloadURL, ref } from 'firebase/storage';
 import { debounce } from 'lodash';
@@ -55,7 +56,7 @@ export const ComponentCard: React.FC<ComponentCardProps> = ({ className = '', co
   }
 
   return (
-    <div className={`${className} relative flex flex-col gap-4 p-4`}>
+    <div className={classNames('relative flex flex-col gap-4 p-4', className)}>
       <button
         className="absolute right-4 top-4 rounded border px-2 text-sm"
         onClick={() => {
