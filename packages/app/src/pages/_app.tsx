@@ -7,9 +7,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   const { loading, signedIn } = useAuth();
 
   return (
-    <div className="grid h-screen grid-rows-[64px_minmax(0,1fr)]">
+    <div className="grid h-screen grid-cols-[100%] grid-rows-[64px_minmax(0,1fr)]">
       <AppNavigation />
-      <div className="h-full">
+      <div className="h-full w-full">
         {loading ? (
           <p className="p-4">読み込み中</p>
         ) : !signedIn ? (
