@@ -6,5 +6,6 @@
   "author": "Amon Sawamura <amotarao@gmail.com>",
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "dependencies": {}
 }
