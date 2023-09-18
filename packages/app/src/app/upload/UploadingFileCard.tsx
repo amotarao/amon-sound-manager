@@ -2,11 +2,11 @@ import classNames from 'classnames';
 import { doc, setDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable } from 'firebase/storage';
 import { useState } from 'react';
-import { useEffectOnce } from '../hooks/useEffectOnce';
-import { firestore, storage } from '../libs/firebase';
-import { Sound } from '../types/sound';
+import { useEffectOnce } from '../../hooks/useEffectOnce';
+import { firestore, storage } from '../../libs/firebase';
+import { Sound } from '../../types/sound';
 
-export type UploadingFileCardProps = {
+type Props = {
   className?: string;
   uid: string;
   file: File;
@@ -14,13 +14,7 @@ export type UploadingFileCardProps = {
   lang?: string;
 };
 
-export const UploadingFileCard: React.FC<UploadingFileCardProps> = ({
-  className = '',
-  uid,
-  file,
-  tags = [],
-  lang = 'ja-JP',
-}) => {
+export function UploadingFileCard({ className, uid, file, tags = [], lang = 'ja-JP' }: Props) {
   const [state, setState] = useState<'initial' | 'uploading' | 'uploaded' | 'error'>('initial');
   const [uploadRate, setUploadRate] = useState(0);
 
@@ -70,4 +64,4 @@ export const UploadingFileCard: React.FC<UploadingFileCardProps> = ({
       {state === 'uploading' && <p>{Math.floor(uploadRate * 100)}%</p>}
     </div>
   );
-};
+}

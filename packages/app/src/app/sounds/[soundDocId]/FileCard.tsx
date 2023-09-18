@@ -6,23 +6,23 @@ import { getDownloadURL, ref } from 'firebase/storage';
 import { debounce } from 'lodash';
 import dynamic from 'next/dynamic';
 import React, { useEffect, useMemo, useState } from 'react';
-import { firestore, storage } from '../libs/firebase';
-import { Sound } from '../types/sound';
-import { ResizableTextarea } from './ResizableTextarea';
-import { TagEditor } from './TagEditor';
+import { firestore, storage } from '../../../libs/firebase';
+import { Sound } from '../../../types/sound';
+import { ResizableTextarea } from '../../ResizableTextarea';
+import { TagEditor } from '../../TagEditor';
 
-const ComponentEditor = dynamic(() => import('./ComponentEditor').then((file) => file.ComponentEditor), {
+const ComponentEditor = dynamic(() => import('../../ComponentEditor').then((file) => file.ComponentEditor), {
   ssr: false,
 });
 
 const collectionId = 'sounds';
 
-export type FileCardProps = {
+type Props = {
   className?: string;
   docId: string;
 };
 
-export const FileCard: React.FC<FileCardProps> = ({ className = '', docId }) => {
+export function FileCard({ className, docId }: Props) {
   const [snapshot, setSnapshot] = useState<DocumentSnapshot<Sound>>();
   const data = useMemo(() => {
     if (!snapshot) {
@@ -92,7 +92,7 @@ export const FileCard: React.FC<FileCardProps> = ({ className = '', docId }) => 
       )}
     </div>
   );
-};
+}
 
 const TitleSection: React.FC<{
   docRef: DocumentReference<Sound>;

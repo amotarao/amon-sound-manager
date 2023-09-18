@@ -14,12 +14,12 @@ import type { NextPage } from 'next';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { ComponentCard } from '../../components/ComponentCard';
-import { TagItemCard } from '../../components/TagItemCard';
 import { useTags } from '../../hooks/useTags';
 import { firestore } from '../../libs/firebase/index';
 import { convertSearchParamsToObject } from '../../libs/searchParams';
 import { Component } from '../../types/component';
+import { TagItemCard } from '../TagItemCard';
+import { ComponentCard } from './ComponentCard';
 
 const collectionId = 'dbKomponenten';
 

@@ -1,7 +1,7 @@
 'use client';
 
-import { AppNavigation } from '../components/common/AppNavigation';
 import { useAuth } from '../hooks/useAuth';
+import { AppNavigation } from './AppNavigation';
 import '../styles/globals.css';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -1,16 +1,16 @@
 import classNames from 'classnames';
 import { GoogleAuthProvider, signInWithRedirect, signOut } from 'firebase/auth';
 import Link from 'next/link';
-import { useAuth } from '../../hooks/useAuth';
-import { auth } from '../../libs/firebase';
+import { useAuth } from '../hooks/useAuth';
+import { auth } from '../libs/firebase';
 
 const provider = new GoogleAuthProvider();
 
-export type AppNavigationProps = {
+type Props = {
   className?: string;
 };
 
-export const AppNavigation: React.FC<AppNavigationProps> = ({ className }) => {
+export function AppNavigation({ className }: Props) {
   const { loading, signedIn } = useAuth();
 
   return (
@@ -49,4 +49,4 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({ className }) => {
       </div>
     </nav>
   );
-};
+}

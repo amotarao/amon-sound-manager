@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect } from 'react';
-import { SoundPreviewList } from '../../components/SoundPreviewList';
-import { TagItemCard } from '../../components/TagItemCard';
 import { useTags } from '../../hooks/useTags';
+import { TagItemCard } from '../TagItemCard';
+import { SoundPreviewList } from './SoundPreviewList';
 
 const collectionId = 'sounds';
 

@@ -3,9 +3,9 @@
 import type { NextPage } from 'next';
 import { useCallback, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { TagEditor } from '../../components/TagEditor';
-import { UploadingFileCard } from '../../components/UploadingFileCard';
 import { useUniqueId } from '../../hooks/useUniqueId';
+import { TagEditor } from '../TagEditor';
+import { UploadingFileCard } from './UploadingFileCard';
 
 const Page: NextPage = () => {
   const [files, setFiles] = useState<{ uid: string; file: File }[]>([]);

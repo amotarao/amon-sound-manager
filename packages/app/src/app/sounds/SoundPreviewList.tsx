@@ -11,10 +11,10 @@ import {
   where,
 } from 'firebase/firestore';
 import { useEffect, useMemo, useState } from 'react';
-import { firestore } from '../libs/firebase';
-import { archivedTag } from '../libs/sound/constants';
-import { sortByRetake, sortByTitle } from '../libs/sound/utils/sort';
-import { Sound } from '../types/sound';
+import { firestore } from '../../libs/firebase';
+import { archivedTag } from '../../libs/sound/constants';
+import { sortByRetake, sortByTitle } from '../../libs/sound/utils/sort';
+import { Sound } from '../../types/sound';
 import { SoundPreviewCard } from './SoundPreviewCard';
 
 const collectionId = 'sounds';

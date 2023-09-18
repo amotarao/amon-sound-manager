@@ -4,22 +4,22 @@ import { getDownloadURL, ref } from 'firebase/storage';
 import { debounce } from 'lodash';
 import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useState } from 'react';
-import { firestore, storage } from '../libs/firebase';
-import { Component } from '../types/component';
-import { Range } from './ComponentEditor';
-import { TagEditor } from './TagEditor';
+import { firestore, storage } from '../../libs/firebase';
+import { Component } from '../../types/component';
+import { Range } from '../ComponentEditor';
+import { TagEditor } from '../TagEditor';
 
-const ComponentEditor = dynamic(() => import('./ComponentEditor').then((file) => file.ComponentEditor), {
+const ComponentEditor = dynamic(() => import('../ComponentEditor').then((file) => file.ComponentEditor), {
   ssr: false,
 });
 
-export type ComponentCardProps = {
+type Props = {
   className?: string;
   collectionId: string;
   docId: string;
 };
 
-export const ComponentCard: React.FC<ComponentCardProps> = ({ className = '', collectionId, docId }) => {
+export function ComponentCard({ className, collectionId, docId }: Props) {
   const [snapshot, setSnapshot] = useState<DocumentSnapshot<Component>>();
 
   const data = useMemo(() => {
@@ -81,7 +81,7 @@ export const ComponentCard: React.FC<ComponentCardProps> = ({ className = '', co
       )}
     </div>
   );
-};
+}
 
 const NameSection: React.FC<{
   docRef: DocumentReference<Component>;

@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { useCallback, useState } from 'react';
 import { useInputComposition } from '../hooks/useInputComposition';
 
-export type TagEditorProps = {
+type Props = {
   className?: string;
   defaultValue?: string[];
   inputId?: string;
@@ -11,14 +11,14 @@ export type TagEditorProps = {
   onChange?: (tags: string[]) => void;
 };
 
-export const TagEditor: React.FC<TagEditorProps> = ({
-  className = '',
+export function TagEditor({
+  className,
   defaultValue = [],
   inputId,
   onAdd = () => null,
   onRemove = () => null,
   onChange = () => null,
-}) => {
+}: Props) {
   const [inputValue, setInputValue] = useState('');
   const { onCompositionStart, onCompositionEnd, handleKeyDown } = useInputComposition();
 
@@ -88,4 +88,4 @@ export const TagEditor: React.FC<TagEditorProps> = ({
       />
     </div>
   );
-};
+}
