@@ -10,11 +10,11 @@ type Props = {
   className?: string;
   uid: string;
   file: File;
-  tags?: string[];
-  lang?: string;
+  tags: string[];
+  langs: string[];
 };
 
-export function UploadingFileCard({ className, uid, file, tags = [], lang = 'ja-JP' }: Props) {
+export function UploadingFileCard({ className, uid, file, tags, langs }: Props) {
   const [state, setState] = useState<'initial' | 'uploading' | 'uploaded' | 'error'>('initial');
   const [uploadRate, setUploadRate] = useState(0);
 
@@ -27,7 +27,7 @@ export function UploadingFileCard({ className, uid, file, tags = [], lang = 'ja-
           size: file.size,
           type: file.type,
         },
-        langs: [lang],
+        langs,
         tags,
         text: null,
         title: null,
