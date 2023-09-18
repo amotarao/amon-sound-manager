@@ -12,12 +12,13 @@ import {
 } from 'firebase/firestore';
 import type { NextPage } from 'next';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { ComponentCard } from '../../components/ComponentCard';
 import { TagItemCard } from '../../components/TagItemCard';
 import { useTags } from '../../hooks/useTags';
 import { firestore } from '../../libs/firebase/index';
+import { convertSearchParamsToObject } from '../../libs/searchParams';
 import { Component } from '../../types/component';
 
 const collectionId = 'dbKomponenten';
@@ -36,30 +37,19 @@ const fetchDocs = async (tags: string[]): Promise<QueryDocumentSnapshot<Componen
 };
 
 const Page: NextPage = () => {
-  const router = useRouter();
-  const componentDocId = useMemo(() => {
-    if (!('component' in router.query) || !router.query.component) {
-      return null;
-    }
-    if (Array.isArray(router.query.component)) {
-      return router.query.component[0];
-    }
-    return router.query.component;
-  }, [router]);
+  const searchParams = useSearchParams();
+  const query = convertSearchParamsToObject(searchParams);
+  const componentDocId = searchParams.get('component');
 
   const [docs, setDocs] = useState<QueryDocumentSnapshot<Component>[]>([]);
   const { tags, currentTags, fetchTags, deleteTag } = useTags(collectionId);
 
   useEffect(() => {
-    if (!router.isReady) {
-      return;
-    }
-
     setDocs([]);
     fetchDocs(currentTags).then((docs) => {
       setDocs(docs);
     });
-  }, [router.isReady, currentTags]);
+  }, [currentTags]);
 
   useEffect(() => {
     fetchTags();
@@ -121,7 +111,7 @@ const Page: NextPage = () => {
                         'grid grid-rows-1 gap-1 px-4 py-2',
                         componentDocId === doc.id && 'bg-neutral-300 dark:bg-neutral-700'
                       )}
-                      href={{ href: '/', query: { ...router.query, component: doc.id } }}
+                      href={{ href: '/', query: { ...query, component: doc.id } }}
                     >
                       <p className="text-sm">{doc.data().name}</p>
                       {tags.length > 0 && (

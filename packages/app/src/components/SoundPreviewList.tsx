@@ -10,7 +10,6 @@ import {
   QueryDocumentSnapshot,
   where,
 } from 'firebase/firestore';
-import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { firestore } from '../libs/firebase';
 import { archivedTag } from '../libs/sound/constants';
@@ -37,15 +36,9 @@ export type SoundPreviewListProps = {
 };
 
 export const SoundPreviewList: React.FC<SoundPreviewListProps> = ({ className, currentSound, currentTags }) => {
-  const router = useRouter();
-
   const [docs, setDocs] = useState<QueryDocumentSnapshot<Sound>[]>([]);
   const query = useMemo(() => getQuery(currentTags || []), [currentTags]);
   useEffect(() => {
-    if (!router.isReady) {
-      return;
-    }
-
     setDocs([]);
     const unsubscribe = onSnapshot(query, (querySnapshot) => {
       setDocs(
@@ -58,7 +51,7 @@ export const SoundPreviewList: React.FC<SoundPreviewListProps> = ({ className, c
     return () => {
       unsubscribe();
     };
-  }, [router.isReady, query, currentTags]);
+  }, [query, currentTags]);
 
   return (
     <div className={classNames('grid grid-cols-1 gap-4', className)}>

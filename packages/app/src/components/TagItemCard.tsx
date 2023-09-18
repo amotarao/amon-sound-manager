@@ -1,10 +1,11 @@
 import classNames from 'classnames';
 import { collection, CollectionReference, getCountFromServer, query, where } from 'firebase/firestore';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { useTags } from '../hooks/useTags';
 import { firestore } from '../libs/firebase';
+import { convertSearchParamsToObject } from '../libs/searchParams';
 import { Sound } from '../types/sound';
 
 const fetchTagCount = async (collectionId: string, tag: string): Promise<number> => {
@@ -24,7 +25,9 @@ export type TagItemCardProps = {
 };
 
 export const TagItemCard: React.FC<TagItemCardProps> = ({ className, collectionId, tag, isCurrent, mode }) => {
-  const router = useRouter();
+  const searchParams = useSearchParams();
+  const query = convertSearchParamsToObject(searchParams);
+
   const { currentTags } = useTags(collectionId);
 
   const [count, setCount] = useState(-1);
@@ -46,10 +49,6 @@ export const TagItemCard: React.FC<TagItemCardProps> = ({ className, collectionI
   }, [tag, mode, currentTags]);
 
   useEffect(() => {
-    if (!router.isReady) {
-      return;
-    }
-
     if (tag === 'ALL') {
       return;
     }
@@ -58,7 +57,7 @@ export const TagItemCard: React.FC<TagItemCardProps> = ({ className, collectionI
     fetchTagCount(collectionId, tag).then((cound) => {
       setCount(cound);
     });
-  }, [router.isReady, collectionId, tag]);
+  }, [collectionId, tag]);
 
   return (
     <Link
@@ -67,7 +66,7 @@ export const TagItemCard: React.FC<TagItemCardProps> = ({ className, collectionI
         isCurrent ? 'bg-neutral-300 dark:bg-neutral-700' : null,
         className
       )}
-      href={{ href: '/', query: { ...router.query, tag: tagQuery } }}
+      href={{ href: '/', query: { ...query, tag: tagQuery } }}
     >
       <p>
         <span className="mr-0.5">#</span>

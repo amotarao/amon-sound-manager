@@ -1,8 +1,9 @@
 import classNames from 'classnames';
 import { QueryDocumentSnapshot } from 'firebase/firestore';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useMemo } from 'react';
+import { convertSearchParamsToObject } from '../libs/searchParams';
 import { archivedTag, retakeName, retakeTag } from '../libs/sound/constants';
 import { Sound } from '../types/sound';
 
@@ -15,7 +16,8 @@ export type SoundPreviewCardProps = {
 };
 
 export const SoundPreviewCard: React.FC<SoundPreviewCardProps> = ({ className, doc, currentSound, currentTags }) => {
-  const router = useRouter();
+  const searchParams = useSearchParams();
+  const query = convertSearchParamsToObject(searchParams);
 
   const title = useMemo(() => doc.data().title, [doc]);
   const tags = useMemo(() => doc.data().tags, [doc]);
@@ -32,7 +34,7 @@ export const SoundPreviewCard: React.FC<SoundPreviewCardProps> = ({ className, d
         currentSound === doc.id && 'bg-neutral-300 dark:bg-neutral-700',
         className
       )}
-      href={{ href: '/', query: { ...router.query, sound: doc.id } }}
+      href={{ href: '/', query: { ...query, sound: doc.id } }}
     >
       {title ? (
         <p className="text-sm">
