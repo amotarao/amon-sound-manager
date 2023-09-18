@@ -21,7 +21,7 @@
     "@google-cloud/speech": "^6.0.2",
     "firebase-admin": "^11.10.1",
     "firebase-functions": "^4.4.1",
-    "music-metadata": "8.1.4"
+    "music-metadata": "7"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.48.0",
