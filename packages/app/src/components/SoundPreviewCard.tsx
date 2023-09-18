@@ -1,23 +1,22 @@
 import classNames from 'classnames';
 import { QueryDocumentSnapshot } from 'firebase/firestore';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useMemo } from 'react';
-import { convertSearchParamsToObject } from '../libs/searchParams';
 import { archivedTag, retakeName, retakeTag } from '../libs/sound/constants';
 import { Sound } from '../types/sound';
 
-export type SoundPreviewCardProps = {
+type Props = {
   className?: string;
   cardClassName?: string;
   doc: QueryDocumentSnapshot<Sound>;
-  currentSound?: string;
   currentTags?: string[];
 };
 
-export const SoundPreviewCard: React.FC<SoundPreviewCardProps> = ({ className, doc, currentSound, currentTags }) => {
+export const SoundPreviewCard: React.FC<Props> = ({ className, doc, currentTags }) => {
+  const pathname = usePathname();
   const searchParams = useSearchParams();
-  const query = convertSearchParamsToObject(searchParams);
+  const currentSoundDocId = pathname.split('/').at(2);
 
   const title = useMemo(() => doc.data().title, [doc]);
   const tags = useMemo(() => doc.data().tags, [doc]);
@@ -31,10 +30,10 @@ export const SoundPreviewCard: React.FC<SoundPreviewCardProps> = ({ className, d
     <Link
       className={classNames(
         'grid grid-rows-1 gap-1 px-4 py-2',
-        currentSound === doc.id && 'bg-neutral-300 dark:bg-neutral-700',
+        currentSoundDocId === doc.id && 'bg-neutral-300 dark:bg-neutral-700',
         className
       )}
-      href={{ href: '/', query: { ...query, sound: doc.id } }}
+      href={`/sounds/${doc.id}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`}
     >
       {title ? (
         <p className="text-sm">

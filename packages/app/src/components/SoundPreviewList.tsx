@@ -29,13 +29,12 @@ const getQuery = (tags: string[]): Query<Sound> => {
   return q;
 };
 
-export type SoundPreviewListProps = {
+type Props = {
   className?: string;
-  currentSound?: string;
   currentTags?: string[];
 };
 
-export const SoundPreviewList: React.FC<SoundPreviewListProps> = ({ className, currentSound, currentTags }) => {
+export function SoundPreviewList({ className, currentTags }: Props) {
   const [docs, setDocs] = useState<QueryDocumentSnapshot<Sound>[]>([]);
   const query = useMemo(() => getQuery(currentTags || []), [currentTags]);
   useEffect(() => {
@@ -55,29 +54,24 @@ export const SoundPreviewList: React.FC<SoundPreviewListProps> = ({ className, c
 
   return (
     <div className={classNames('grid grid-cols-1 gap-4', className)}>
-      <List
-        docs={docs.filter((doc) => !doc.data().tags.includes(archivedTag))}
-        currentSound={currentSound}
-        currentTags={currentTags}
-      />
+      <List docs={docs.filter((doc) => !doc.data().tags.includes(archivedTag))} currentTags={currentTags} />
       <List
         cardClassName="opacity-70"
         title="アーカイブ済み"
         docs={docs.filter((doc) => doc.data().tags.includes(archivedTag))}
-        currentSound={currentSound}
         currentTags={currentTags}
       />
     </div>
   );
-};
+}
 
-const List: React.FC<
-  {
-    cardClassName?: string;
-    title?: string;
-    docs: QueryDocumentSnapshot<Sound>[];
-  } & Pick<SoundPreviewListProps, 'currentSound' | 'currentTags'>
-> = ({ cardClassName, title, docs, currentSound, currentTags }) => {
+type ListProps = {
+  cardClassName?: string;
+  title?: string;
+  docs: QueryDocumentSnapshot<Sound>[];
+} & Pick<Props, 'currentTags'>;
+
+function List({ cardClassName, title, docs, currentTags }: ListProps) {
   if (docs.length === 0) {
     return null;
   }
@@ -88,15 +82,10 @@ const List: React.FC<
       <ul>
         {docs.map((doc) => (
           <li key={doc.id} className="after:mx-4 after:block after:h-[1px] after:bg-current after:content-['']">
-            <SoundPreviewCard
-              className={cardClassName}
-              doc={doc}
-              currentSound={currentSound}
-              currentTags={currentTags}
-            />
+            <SoundPreviewCard className={cardClassName} doc={doc} currentTags={currentTags} />
           </li>
         ))}
       </ul>
     </div>
   );
-};
+}

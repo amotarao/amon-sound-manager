@@ -32,9 +32,9 @@ export const TagItemCard: React.FC<TagItemCardProps> = ({ className, collectionI
 
   const [count, setCount] = useState(-1);
 
-  const tagQuery = useMemo((): string[] | undefined => {
+  const tagQuery = useMemo((): string[] | null => {
     if (tag === 'ALL') {
-      return undefined;
+      return null;
     }
 
     if (mode !== 'multiple') {

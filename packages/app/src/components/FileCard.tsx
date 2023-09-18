@@ -1,3 +1,5 @@
+'use client';
+
 import classNames from 'classnames';
 import { deleteDoc, doc, DocumentReference, DocumentSnapshot, onSnapshot, updateDoc } from 'firebase/firestore';
 import { getDownloadURL, ref } from 'firebase/storage';
