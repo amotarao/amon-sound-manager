@@ -1,10 +1,19 @@
+// eslint-disable-next-line import/no-unresolved
+import { onDocumentWritten } from 'firebase-functions/v2/firestore';
 import { defaultRegion } from '..';
 import { firestore } from '../libs/firebase';
 
-export const onWriteFirestoreDbKomponentDocument = defaultRegion.firestore
-  .document('dbKomponenten/{ID}')
-  .onWrite(async (change) => {
-    const data = change.after ? change.after.data() : change.before.data();
+export const onWriteFirestoreDbKomponentDocument = onDocumentWritten(
+  {
+    document: 'dbKomponenten/{ID}',
+    region: defaultRegion,
+  },
+  async (event) => {
+    const data = event.data?.after ? event.data.after.data() : event.data?.before.data();
+    if (!data) {
+      return;
+    }
+
     const tags = (data?.tags as string[]) ?? [];
 
     const bulkWriter = firestore.bulkWriter();
@@ -15,4 +24,5 @@ export const onWriteFirestoreDbKomponentDocument = defaultRegion.firestore
       });
     });
     await bulkWriter.close();
-  });
+  }
+);

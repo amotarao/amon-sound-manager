@@ -1,22 +1,31 @@
 // eslint-disable-next-line import/no-unresolved
 import { ObjectMetadata } from 'firebase-functions/v1/storage';
+// eslint-disable-next-line import/no-unresolved
+import { onObjectFinalized } from 'firebase-functions/v2/storage';
 import { parseBuffer } from 'music-metadata';
 import { defaultRegion } from '..';
 import { firestore } from '../libs/firebase';
 import { speechClient } from '../libs/speech';
 import { downloadObjectBuffer } from '../libs/storage';
 
-export const onFinalizeStorageObject = defaultRegion.storage.object().onFinalize(async (object) => {
-  if (object.name?.match(/sounds\/.+\.mp3$/)) {
-    await runGenerateTextFromMp3(object);
-    await parseMp3Metadata(object);
-    return;
+export const onFinalizeStorageObject = onObjectFinalized(
+  {
+    region: defaultRegion,
+  },
+  async (event) => {
+    const object = event.data;
+
+    if (object.name?.match(/sounds\/.+\.mp3$/)) {
+      await runGenerateTextFromMp3(object);
+      await parseMp3Metadata(object);
+      return;
+    }
+    if (object.name?.match(/speeches\/.+\.json$/)) {
+      await saveTextResultToFirestore(object);
+      return;
+    }
   }
-  if (object.name?.match(/speeches\/.+\.json$/)) {
-    await saveTextResultToFirestore(object);
-    return;
-  }
-});
+);
 
 /**
  * mp3 を Speech to Text でテキスト化
