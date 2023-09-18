@@ -52,7 +52,7 @@ export default function Page({ children }: { children: React.ReactNode }) {
           <SoundPreviewList currentTags={currentTags} />
         </div>
         {/* Detail */}
-        <div className="flex h-full flex-col gap-4 overflow-y-auto">{children}</div>
+        <div className="h-full overflow-y-auto">{children}</div>
       </div>
     </div>
   );

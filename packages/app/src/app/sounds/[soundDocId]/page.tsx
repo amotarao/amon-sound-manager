@@ -7,5 +7,9 @@ type PageContext = {
 };
 
 export default function Page({ params: { soundDocId } }: PageContext) {
-  return <FileCard docId={soundDocId} />;
+  return (
+    <div>
+      <FileCard docId={soundDocId} />
+    </div>
+  );
 }
