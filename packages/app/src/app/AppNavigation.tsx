@@ -1,3 +1,5 @@
+'use client';
+
 import classNames from 'classnames';
 import { GoogleAuthProvider, signInWithRedirect, signOut } from 'firebase/auth';
 import Link from 'next/link';
