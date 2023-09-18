@@ -8,7 +8,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const { loading, signedIn } = useAuth();
 
   return (
-    <html lang="en">
+    <html lang="ja-JP">
       <body>
         <div className="grid h-screen grid-cols-[100%] grid-rows-[64px_minmax(0,1fr)]">
           <AppNavigation />
