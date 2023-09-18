@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { collection, CollectionReference, getCountFromServer, query, where } from 'firebase/firestore';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { useTags } from '../hooks/useTags';
 import { firestore } from '../libs/firebase';

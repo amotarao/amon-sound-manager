@@ -1,3 +1,5 @@
+'use client';
+
 import classNames from 'classnames';
 import {
   collection,
@@ -10,7 +12,7 @@ import {
 } from 'firebase/firestore';
 import type { NextPage } from 'next';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { ComponentCard } from '../../components/ComponentCard';
 import { TagItemCard } from '../../components/TagItemCard';

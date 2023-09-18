@@ -10,7 +10,7 @@ import {
   QueryDocumentSnapshot,
   where,
 } from 'firebase/firestore';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { firestore } from '../libs/firebase';
 import { archivedTag } from '../libs/sound/constants';

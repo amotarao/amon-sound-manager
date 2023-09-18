@@ -1,6 +1,8 @@
+'use client';
+
 import type { NextPage } from 'next';
-import { useRouter } from 'next/router';
-import { useEffect, useMemo } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 import { FileCard } from '../components/FileCard';
 import { SoundPreviewList } from '../components/SoundPreviewList';
 import { TagItemCard } from '../components/TagItemCard';
@@ -9,16 +11,8 @@ import { useTags } from '../hooks/useTags';
 const collectionId = 'sounds';
 
 const Page: NextPage = () => {
-  const router = useRouter();
-  const soundDocId = useMemo(() => {
-    if (!('sound' in router.query) || !router.query.sound) {
-      return null;
-    }
-    if (Array.isArray(router.query.sound)) {
-      return router.query.sound[0];
-    }
-    return router.query.sound;
-  }, [router]);
+  const searchParams = useSearchParams();
+  const soundDocId = searchParams.get('sound');
 
   const { tags, currentTags, fetchTags, deleteTag } = useTags(collectionId);
   useEffect(() => {

@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { QueryDocumentSnapshot } from 'firebase/firestore';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import { archivedTag, retakeName, retakeTag } from '../libs/sound/constants';
 import { Sound } from '../types/sound';

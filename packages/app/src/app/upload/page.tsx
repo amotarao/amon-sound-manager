@@ -1,3 +1,5 @@
+'use client';
+
 import type { NextPage } from 'next';
 import { useCallback, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';

@@ -1,29 +1,19 @@
 import { collection, CollectionReference, deleteDoc, doc, getDocs } from 'firebase/firestore';
-import { useRouter } from 'next/router';
+import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { firestore } from '../libs/firebase';
 import { SoundTag } from '../types/sound';
 
 export const useTags = (collectionId: string) => {
-  const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [tags, setTags] = useState<string[]>([]);
   const [currentTags, setCurrentTags] = useState<string[]>([]);
 
   useEffect(() => {
-    if (!router.query.tag) {
-      const tags: string[] = [];
-      JSON.stringify(currentTags) !== JSON.stringify(tags) && setCurrentTags(tags);
-      return;
-    }
-    if (Array.isArray(router.query.tag)) {
-      const tags = router.query.tag;
-      JSON.stringify(currentTags) !== JSON.stringify(tags) && setCurrentTags(tags);
-      return;
-    }
-    const tags = [router.query.tag];
+    const tags = searchParams.getAll('tag');
     JSON.stringify(currentTags) !== JSON.stringify(tags) && setCurrentTags(tags);
-  }, [router.query.tag, currentTags]);
+  }, [searchParams, currentTags]);
 
   const fetchTags = useCallback(async () => {
     setTags([]);
