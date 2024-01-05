@@ -22,7 +22,7 @@ const collectionId = 'sounds';
 const getQuery = (tags: string[]): Query<Sound> => {
   const c = collection(firestore, collectionId) as CollectionReference<Sound>;
   let q = query(c, orderBy('file.name'));
-  q = query(q, limit(tags ? 1000 : 30));
+  q = query(q, limit(tags.length > 0 ? 1000 : 30));
   if (tags.length) {
     q = query(q, where('tags', 'array-contains-any', tags));
   }

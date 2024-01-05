@@ -77,17 +77,13 @@ export const ComponentEditor: React.FC<ComponentEditorProps> = ({
   }, [regionId, audioRef, containerRef, firstDefaultRange]);
 
   useEffect(() => {
-    let cb = (region: Region) => {
+    const cb = (region: Region) => {
       const { start, end } = region;
       setRange({ start, end });
       onChangeRange({ start, end });
     };
 
     wavesurfer?.on('region-updated', cb);
-
-    return () => {
-      cb = null as any;
-    };
   }, [wavesurfer, onChangeRange]);
 
   return (
