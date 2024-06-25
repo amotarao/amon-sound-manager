@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import classNames from 'classnames';
-import { GoogleAuthProvider, signInWithRedirect, signOut } from 'firebase/auth';
-import Link from 'next/link';
-import { useAuth } from '../hooks/useAuth';
-import { auth } from '../libs/firebase';
+import classNames from "classnames";
+import { GoogleAuthProvider, signInWithRedirect, signOut } from "firebase/auth";
+import Link from "next/link";
+import { useAuth } from "../hooks/useAuth";
+import { auth } from "../libs/firebase";
 
 const provider = new GoogleAuthProvider();
 
@@ -18,8 +18,8 @@ export function AppNavigation({ className }: Props) {
   return (
     <nav
       className={classNames(
-        'grid h-full grid-cols-[minmax(0,1fr)_auto] items-center justify-between border-b px-4',
-        className
+        "grid h-full grid-cols-[minmax(0,1fr)_auto] items-center justify-between border-b px-4",
+        className,
       )}
     >
       <div>
@@ -32,6 +32,7 @@ export function AppNavigation({ className }: Props) {
         {loading ? null : !signedIn ? (
           <button
             className="rounded border px-4 py-1"
+            type="button"
             onClick={() => {
               signInWithRedirect(auth, provider);
             }}
@@ -41,6 +42,7 @@ export function AppNavigation({ className }: Props) {
         ) : (
           <button
             className="rounded border px-4 py-1"
+            type="button"
             onClick={() => {
               signOut(auth);
             }}

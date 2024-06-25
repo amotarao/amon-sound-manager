@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import type { NextPage } from 'next';
-import { useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import { useUniqueId } from '../../hooks/useUniqueId';
-import { TagEditor } from '../TagEditor';
-import { UploadingFileCard } from './UploadingFileCard';
+import type { NextPage } from "next";
+import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+import { useUniqueId } from "../../hooks/useUniqueId";
+import { TagEditor } from "../TagEditor";
+import { UploadingFileCard } from "./UploadingFileCard";
 
 const Page: NextPage = () => {
   const [files, setFiles] = useState<
@@ -21,14 +21,24 @@ const Page: NextPage = () => {
   const langId = useUniqueId();
   const tagsId = useUniqueId();
 
-  const handleChange: React.ChangeEventHandler<HTMLInputElement> = async (e) => {
+  const handleChange: React.ChangeEventHandler<HTMLInputElement> = async (
+    e,
+  ) => {
     const fileList = e.target.files;
     if (!fileList) {
       return;
     }
 
     setFiles((files) => {
-      return [...files, ...Array.from(fileList).map((file) => ({ uid: uuidv4(), file, tags, langs }))];
+      return [
+        ...files,
+        ...Array.from(fileList).map((file) => ({
+          uid: uuidv4(),
+          file,
+          tags,
+          langs,
+        })),
+      ];
     });
   };
 
@@ -64,7 +74,13 @@ const Page: NextPage = () => {
       </div>
       <div className="flex flex-col gap-2">
         {files.map((file) => (
-          <UploadingFileCard key={file.uid} uid={file.uid} file={file.file} tags={file.tags} langs={file.langs} />
+          <UploadingFileCard
+            key={file.uid}
+            uid={file.uid}
+            file={file.file}
+            tags={file.tags}
+            langs={file.langs}
+          />
         ))}
       </div>
     </div>

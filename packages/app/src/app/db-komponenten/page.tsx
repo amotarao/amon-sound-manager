@@ -1,35 +1,40 @@
-'use client';
+"use client";
 
-import classNames from 'classnames';
+import classNames from "classnames";
 import {
+  type CollectionReference,
+  type QueryDocumentSnapshot,
   collection,
-  CollectionReference,
   getDocs,
   limit,
   query,
-  QueryDocumentSnapshot,
   where,
-} from 'firebase/firestore';
-import type { NextPage } from 'next';
-import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { useTags } from '../../hooks/useTags';
-import { firestore } from '../../libs/firebase/index';
-import { convertSearchParamsToObject } from '../../libs/searchParams';
-import { Component } from '../../types/component';
-import { TagItemCard } from '../TagItemCard';
-import { ComponentCard } from './ComponentCard';
+} from "firebase/firestore";
+import type { NextPage } from "next";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useTags } from "../../hooks/useTags";
+import { firestore } from "../../libs/firebase/index";
+import { convertSearchParamsToObject } from "../../libs/searchParams";
+import type { Component } from "../../types/component";
+import { TagItemCard } from "../TagItemCard";
+import { ComponentCard } from "./ComponentCard";
 
-const collectionId = 'dbKomponenten';
+const collectionId = "dbKomponenten";
 
-const fetchDocs = async (tags: string[]): Promise<QueryDocumentSnapshot<Component>[]> => {
-  const c = collection(firestore, collectionId) as CollectionReference<Component>;
+const fetchDocs = async (
+  tags: string[],
+): Promise<QueryDocumentSnapshot<Component>[]> => {
+  const c = collection(
+    firestore,
+    collectionId,
+  ) as CollectionReference<Component>;
   let q = query(c);
 
   q = query(q, limit(1000));
   if (tags.length) {
-    q = query(q, where('tags', 'array-contains-any', tags));
+    q = query(q, where("tags", "array-contains-any", tags));
   }
 
   const querySnapshot = await getDocs(q);
@@ -39,7 +44,7 @@ const fetchDocs = async (tags: string[]): Promise<QueryDocumentSnapshot<Componen
 const Page: NextPage = () => {
   const searchParams = useSearchParams();
   const query = convertSearchParamsToObject(searchParams);
-  const componentDocId = searchParams.get('component');
+  const componentDocId = searchParams.get("component");
 
   const [docs, setDocs] = useState<QueryDocumentSnapshot<Component>[]>([]);
   const { tags, currentTags, fetchTags, deleteTag } = useTags(collectionId);
@@ -61,12 +66,19 @@ const Page: NextPage = () => {
         {/* Tag */}
         <div className="flex h-full flex-col overflow-y-auto border-r pb-10">
           <ul>
-            {['ALL', ...tags].map((_tag) => (
-              <li key={_tag} className="after:mx-2 after:block after:h-[1px] after:bg-current after:content-['']">
+            {["ALL", ...tags].map((_tag) => (
+              <li
+                key={_tag}
+                className="after:mx-2 after:block after:h-[1px] after:bg-current after:content-['']"
+              >
                 <TagItemCard
                   collectionId={collectionId}
                   tag={_tag}
-                  isCurrent={_tag !== 'ALL' ? currentTags.includes(_tag) : !currentTags.length}
+                  isCurrent={
+                    _tag !== "ALL"
+                      ? currentTags.includes(_tag)
+                      : !currentTags.length
+                  }
                   mode="multiple"
                 />
               </li>
@@ -82,6 +94,7 @@ const Page: NextPage = () => {
                   <p className="shrink grow">{tag}</p>
                   <button
                     className="shrink-0 rounded border px-2 text-sm"
+                    type="button"
                     onClick={() => {
                       deleteTag(tag);
                     }}
@@ -94,7 +107,9 @@ const Page: NextPage = () => {
           )}
           <ul>
             {docs
-              .filter((doc) => currentTags.every((tag) => doc.data().tags.includes(tag)))
+              .filter((doc) =>
+                currentTags.every((tag) => doc.data().tags.includes(tag)),
+              )
               .sort((a, z) => {
                 const aName = a.data().name;
                 const zName = z.data().name;
@@ -102,16 +117,25 @@ const Page: NextPage = () => {
                 return aName > zName ? 1 : aName < zName ? -1 : 0;
               })
               .map((doc) => {
-                const tags = doc.data().tags.filter((_tag) => !currentTags.includes(_tag));
+                const tags = doc
+                  .data()
+                  .tags.filter((_tag) => !currentTags.includes(_tag));
 
                 return (
-                  <li key={doc.id} className="after:mx-2 after:block after:h-[1px] after:bg-current after:content-['']">
+                  <li
+                    key={doc.id}
+                    className="after:mx-2 after:block after:h-[1px] after:bg-current after:content-['']"
+                  >
                     <Link
                       className={classNames(
-                        'grid grid-rows-1 gap-1 px-4 py-2',
-                        componentDocId === doc.id && 'bg-neutral-300 dark:bg-neutral-700'
+                        "grid grid-rows-1 gap-1 px-4 py-2",
+                        componentDocId === doc.id &&
+                          "bg-neutral-300 dark:bg-neutral-700",
                       )}
-                      href={{ href: '/', query: { ...query, component: doc.id } }}
+                      href={{
+                        href: "/",
+                        query: { ...query, component: doc.id },
+                      }}
                     >
                       <p className="text-sm">{doc.data().name}</p>
                       {tags.length > 0 && (
@@ -134,7 +158,13 @@ const Page: NextPage = () => {
         </div>
         {/* Detail */}
         <div className="flex h-full flex-col gap-4 overflow-y-auto">
-          {componentDocId && <ComponentCard key={componentDocId} collectionId="dbKomponenten" docId={componentDocId} />}
+          {componentDocId && (
+            <ComponentCard
+              key={componentDocId}
+              collectionId="dbKomponenten"
+              docId={componentDocId}
+            />
+          )}
         </div>
       </div>
     </div>

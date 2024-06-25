@@ -1,6 +1,6 @@
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { useEffect, useMemo, useState } from 'react';
-import { auth } from '../libs/firebase';
+import { type User, onAuthStateChanged } from "firebase/auth";
+import { useEffect, useMemo, useState } from "react";
+import { auth } from "../libs/firebase";
 
 export type UseAuth = {
   loading: boolean;

@@ -4,9 +4,7 @@
   "private": true,
   "repository": "git@github.com:amotarao/amon-sound-manager.git",
   "author": "Amon Sawamura <amotarao@gmail.com>",
-  "workspaces": [
-    "packages/*"
-  ],
+  "workspaces": ["packages/*"],
   "engines": {
     "node": "20",
     "pnpm": "9"

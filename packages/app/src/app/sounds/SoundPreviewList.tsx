@@ -1,30 +1,30 @@
-import classNames from 'classnames';
+import classNames from "classnames";
 import {
+  type CollectionReference,
+  type Query,
+  type QueryDocumentSnapshot,
   collection,
-  CollectionReference,
   limit,
   onSnapshot,
   orderBy,
-  Query,
   query,
-  QueryDocumentSnapshot,
   where,
-} from 'firebase/firestore';
-import { useEffect, useMemo, useState } from 'react';
-import { firestore } from '../../libs/firebase';
-import { archivedTag } from '../../libs/sound/constants';
-import { sortByRetake, sortByTitle } from '../../libs/sound/utils/sort';
-import { Sound } from '../../types/sound';
-import { SoundPreviewCard } from './SoundPreviewCard';
+} from "firebase/firestore";
+import { useEffect, useMemo, useState } from "react";
+import { firestore } from "../../libs/firebase";
+import { archivedTag } from "../../libs/sound/constants";
+import { sortByRetake, sortByTitle } from "../../libs/sound/utils/sort";
+import type { Sound } from "../../types/sound";
+import { SoundPreviewCard } from "./SoundPreviewCard";
 
-const collectionId = 'sounds';
+const collectionId = "sounds";
 
 const getQuery = (tags: string[]): Query<Sound> => {
   const c = collection(firestore, collectionId) as CollectionReference<Sound>;
-  let q = query(c, orderBy('file.name'));
+  let q = query(c, orderBy("file.name"));
   q = query(q, limit(tags.length > 0 ? 1000 : 30));
   if (tags.length) {
-    q = query(q, where('tags', 'array-contains-any', tags));
+    q = query(q, where("tags", "array-contains-any", tags));
   }
   return q;
 };
@@ -42,8 +42,10 @@ export function SoundPreviewList({ className, currentTags }: Props) {
     const unsubscribe = onSnapshot(query, (querySnapshot) => {
       setDocs(
         querySnapshot.docs
-          .filter((doc) => currentTags?.every((tag) => doc.data().tags.includes(tag)))
-          .sort((a, z) => sortByRetake(a, z) || sortByTitle(a, z))
+          .filter((doc) =>
+            currentTags?.every((tag) => doc.data().tags.includes(tag)),
+          )
+          .sort((a, z) => sortByRetake(a, z) || sortByTitle(a, z)),
       );
     });
 
@@ -53,8 +55,11 @@ export function SoundPreviewList({ className, currentTags }: Props) {
   }, [query, currentTags]);
 
   return (
-    <div className={classNames('grid grid-cols-1 gap-4', className)}>
-      <List docs={docs.filter((doc) => !doc.data().tags.includes(archivedTag))} currentTags={currentTags} />
+    <div className={classNames("grid grid-cols-1 gap-4", className)}>
+      <List
+        docs={docs.filter((doc) => !doc.data().tags.includes(archivedTag))}
+        currentTags={currentTags}
+      />
       <List
         cardClassName="opacity-70"
         title="アーカイブ済み"
@@ -69,7 +74,7 @@ type ListProps = {
   cardClassName?: string;
   title?: string;
   docs: QueryDocumentSnapshot<Sound>[];
-} & Pick<Props, 'currentTags'>;
+} & Pick<Props, "currentTags">;
 
 function List({ cardClassName, title, docs, currentTags }: ListProps) {
   if (docs.length === 0) {
@@ -81,8 +86,15 @@ function List({ cardClassName, title, docs, currentTags }: ListProps) {
       {title && <p className="mx-4 border-b py-2 text-xs font-bold">{title}</p>}
       <ul>
         {docs.map((doc) => (
-          <li key={doc.id} className="after:mx-4 after:block after:h-[1px] after:bg-current after:content-['']">
-            <SoundPreviewCard className={cardClassName} doc={doc} currentTags={currentTags} />
+          <li
+            key={doc.id}
+            className="after:mx-4 after:block after:h-[1px] after:bg-current after:content-['']"
+          >
+            <SoundPreviewCard
+              className={cardClassName}
+              doc={doc}
+              currentTags={currentTags}
+            />
           </li>
         ))}
       </ul>

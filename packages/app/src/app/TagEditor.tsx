@@ -1,6 +1,6 @@
-import classNames from 'classnames';
-import { useCallback, useState } from 'react';
-import { useInputComposition } from '../hooks/useInputComposition';
+import classNames from "classnames";
+import { useCallback, useState } from "react";
+import { useInputComposition } from "../hooks/useInputComposition";
 
 type Props = {
   className?: string;
@@ -19,8 +19,9 @@ export function TagEditor({
   onRemove = () => null,
   onChange = () => null,
 }: Props) {
-  const [inputValue, setInputValue] = useState('');
-  const { onCompositionStart, onCompositionEnd, handleKeyDown } = useInputComposition();
+  const [inputValue, setInputValue] = useState("");
+  const { onCompositionStart, onCompositionEnd, handleKeyDown } =
+    useInputComposition();
 
   const [tags, setTags] = useState<string[]>(defaultValue);
 
@@ -34,7 +35,7 @@ export function TagEditor({
       onAdd(tag);
       onChange(newTags);
     },
-    [tags, onAdd, onChange]
+    [tags, onAdd, onChange],
   );
 
   const removeTag = useCallback(
@@ -48,17 +49,23 @@ export function TagEditor({
       onRemove(tag);
       onChange(newTags);
     },
-    [tags, onRemove, onChange]
+    [tags, onRemove, onChange],
   );
 
   return (
-    <div className={classNames('flex flex-wrap gap-2 rounded border p-2', className)}>
+    <div
+      className={classNames(
+        "flex flex-wrap gap-2 rounded border p-2",
+        className,
+      )}
+    >
       <ul className="flex flex-wrap gap-2">
         {tags.map((tag) => (
           <li key={tag}>
             <div className="flex w-max gap-2 rounded-full border px-2 text-sm">
               <p>{tag}</p>
               <button
+                type="button"
                 onClick={() => {
                   removeTag(tag);
                 }}
@@ -78,9 +85,9 @@ export function TagEditor({
           setInputValue(e.currentTarget.value);
         }}
         onKeyDown={handleKeyDown((e) => {
-          if ([',', 'Enter'].includes(e.key)) {
+          if ([",", "Enter"].includes(e.key)) {
             addTag((e.target as HTMLInputElement).value);
-            setInputValue('');
+            setInputValue("");
           }
         })}
         onCompositionStart={onCompositionStart}

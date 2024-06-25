@@ -1,9 +1,11 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState } from "react";
 
 export type UseInputComposition = {
   onCompositionStart: React.CompositionEventHandler<HTMLInputElement>;
   onCompositionEnd: React.CompositionEventHandler<HTMLInputElement>;
-  handleKeyDown: (fn: React.KeyboardEventHandler<HTMLInputElement>) => React.KeyboardEventHandler<HTMLInputElement>;
+  handleKeyDown: (
+    fn: React.KeyboardEventHandler<HTMLInputElement>,
+  ) => React.KeyboardEventHandler<HTMLInputElement>;
 };
 
 export const useInputComposition = (): UseInputComposition => {
@@ -17,14 +19,16 @@ export const useInputComposition = (): UseInputComposition => {
   }, []);
 
   const handleKeyDown = useCallback(
-    (fn: React.KeyboardEventHandler<HTMLInputElement>): React.KeyboardEventHandler<HTMLInputElement> =>
+    (
+      fn: React.KeyboardEventHandler<HTMLInputElement>,
+    ): React.KeyboardEventHandler<HTMLInputElement> =>
       (e) => {
-        if (e.key === 'Enter' && isComposition) {
+        if (e.key === "Enter" && isComposition) {
           return;
         }
         fn(e);
       },
-    [isComposition]
+    [isComposition],
   );
 
   return {

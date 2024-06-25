@@ -1,10 +1,10 @@
-import classNames from 'classnames';
-import { QueryDocumentSnapshot } from 'firebase/firestore';
-import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
-import { useMemo } from 'react';
-import { archivedTag, retakeName, retakeTag } from '../../libs/sound/constants';
-import { Sound } from '../../types/sound';
+import classNames from "classnames";
+import type { QueryDocumentSnapshot } from "firebase/firestore";
+import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
+import { useMemo } from "react";
+import { archivedTag, retakeName, retakeTag } from "../../libs/sound/constants";
+import type { Sound } from "../../types/sound";
 
 type Props = {
   className?: string;
@@ -13,27 +13,37 @@ type Props = {
   currentTags?: string[];
 };
 
-export const SoundPreviewCard: React.FC<Props> = ({ className, doc, currentTags }) => {
+export const SoundPreviewCard: React.FC<Props> = ({
+  className,
+  doc,
+  currentTags,
+}) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const currentSoundDocId = pathname.split('/').at(2);
+  const currentSoundDocId = pathname.split("/").at(2);
 
   const title = useMemo(() => doc.data().title, [doc]);
   const tags = useMemo(() => doc.data().tags, [doc]);
   const isRetake = useMemo(() => tags.includes(retakeTag), [tags]);
   const viewTags = useMemo(
-    () => tags.filter((_tag) => !currentTags?.includes(_tag) && _tag !== retakeTag && _tag !== archivedTag),
-    [tags, currentTags]
+    () =>
+      tags.filter(
+        (_tag) =>
+          !currentTags?.includes(_tag) &&
+          _tag !== retakeTag &&
+          _tag !== archivedTag,
+      ),
+    [tags, currentTags],
   );
 
   return (
     <Link
       className={classNames(
-        'grid grid-rows-1 gap-1 px-4 py-2',
-        currentSoundDocId === doc.id && 'bg-neutral-300 dark:bg-neutral-700',
-        className
+        "grid grid-rows-1 gap-1 px-4 py-2",
+        currentSoundDocId === doc.id && "bg-neutral-300 dark:bg-neutral-700",
+        className,
       )}
-      href={`/sounds/${doc.id}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`}
+      href={`/sounds/${doc.id}${searchParams.toString() ? `?${searchParams.toString()}` : ""}`}
     >
       {title ? (
         <p className="text-sm">
@@ -64,7 +74,13 @@ const RetakeLabel: React.FC<{
   className?: string;
 }> = ({ className }) => {
   return (
-    <span className={classNames('rounded-sm bg-white px-1 text-xs text-black', className)} aria-label={retakeName}>
+    <span
+      className={classNames(
+        "rounded-sm bg-white px-1 text-xs text-black",
+        className,
+      )}
+      aria-label={retakeName}
+    >
       ▲
     </span>
   );

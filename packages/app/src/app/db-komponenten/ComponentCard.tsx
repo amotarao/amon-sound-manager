@@ -1,17 +1,27 @@
-import classNames from 'classnames';
-import { deleteDoc, doc, DocumentReference, DocumentSnapshot, onSnapshot, updateDoc } from 'firebase/firestore';
-import { getDownloadURL, ref } from 'firebase/storage';
-import { debounce } from 'lodash';
-import dynamic from 'next/dynamic';
-import { useEffect, useMemo, useState } from 'react';
-import { firestore, storage } from '../../libs/firebase';
-import { Component } from '../../types/component';
-import { Range } from '../ComponentEditor';
-import { TagEditor } from '../TagEditor';
+import classNames from "classnames";
+import {
+  type DocumentReference,
+  type DocumentSnapshot,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  updateDoc,
+} from "firebase/firestore";
+import { getDownloadURL, ref } from "firebase/storage";
+import { debounce } from "lodash";
+import dynamic from "next/dynamic";
+import { useEffect, useMemo, useState } from "react";
+import { firestore, storage } from "../../libs/firebase";
+import type { Component } from "../../types/component";
+import type { Range } from "../ComponentEditor";
+import { TagEditor } from "../TagEditor";
 
-const ComponentEditor = dynamic(() => import('../ComponentEditor').then((file) => file.ComponentEditor), {
-  ssr: false,
-});
+const ComponentEditor = dynamic(
+  () => import("../ComponentEditor").then((file) => file.ComponentEditor),
+  {
+    ssr: false,
+  },
+);
 
 type Props = {
   className?: string;
@@ -30,9 +40,12 @@ export function ComponentCard({ className, collectionId, docId }: Props) {
   }, [snapshot]);
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(doc(firestore, collectionId, docId), (snapshot) => {
-      setSnapshot(snapshot as DocumentSnapshot<Component>);
-    });
+    const unsubscribe = onSnapshot(
+      doc(firestore, collectionId, docId),
+      (snapshot) => {
+        setSnapshot(snapshot as DocumentSnapshot<Component>);
+      },
+    );
 
     return () => {
       unsubscribe();
@@ -49,16 +62,17 @@ export function ComponentCard({ className, collectionId, docId }: Props) {
       const url = await getDownloadURL(storageRef);
       setUrl(url);
     })().catch(console.error);
-  }, [docId, data]);
+  }, [data]);
 
   if (!snapshot || !data) {
     return null;
   }
 
   return (
-    <div className={classNames('relative flex flex-col gap-4 p-4', className)}>
+    <div className={classNames("relative flex flex-col gap-4 p-4", className)}>
       <button
         className="absolute right-4 top-4 rounded border px-2 text-sm"
+        type="button"
         onClick={() => {
           deleteDoc(snapshot.ref);
         }}
@@ -85,9 +99,9 @@ export function ComponentCard({ className, collectionId, docId }: Props) {
 
 const NameSection: React.FC<{
   docRef: DocumentReference<Component>;
-  defaultValue: Component['name'];
+  defaultValue: Component["name"];
 }> = ({ docRef, defaultValue }) => {
-  const [value, setValue] = useState(defaultValue || '');
+  const [value, setValue] = useState(defaultValue || "");
 
   const updateValue = useMemo(
     () =>
@@ -96,7 +110,7 @@ const NameSection: React.FC<{
           name,
         });
       }, 1000),
-    [docRef]
+    [docRef],
   );
 
   return (
@@ -116,7 +130,7 @@ const NameSection: React.FC<{
 
 const TagsSection: React.FC<{
   docRef: DocumentReference<Component>;
-  defaultValue: Component['tags'];
+  defaultValue: Component["tags"];
 }> = ({ docRef, defaultValue }) => {
   const [value, setValue] = useState(defaultValue);
 
@@ -127,7 +141,7 @@ const TagsSection: React.FC<{
           tags,
         });
       }, 0),
-    [docRef]
+    [docRef],
   );
 
   return (
@@ -158,7 +172,7 @@ const ComponentSection: React.FC<{
           end,
         });
       }, 1000),
-    [docRef]
+    [docRef],
   );
 
   return (

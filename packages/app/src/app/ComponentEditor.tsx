@@ -1,11 +1,11 @@
-import classNames from 'classnames';
-import { addDoc, collection } from 'firebase/firestore';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import WaveSurfer from 'wavesurfer.js';
-import RegionsPlugin, { Region } from 'wavesurfer.js/src/plugin/regions';
-import { firestore } from '../libs/firebase';
-import { Component } from '../types/component';
-import { TagEditor } from './TagEditor';
+import classNames from "classnames";
+import { addDoc, collection } from "firebase/firestore";
+import { useEffect, useMemo, useRef, useState } from "react";
+import WaveSurfer from "wavesurfer.js";
+import RegionsPlugin, { type Region } from "wavesurfer.js/src/plugin/regions";
+import { firestore } from "../libs/firebase";
+import type { Component } from "../types/component";
+import { TagEditor } from "./TagEditor";
 
 export type Range = {
   start: number;
@@ -31,7 +31,7 @@ export const ComponentEditor: React.FC<ComponentEditorProps> = ({
   defaultRange,
   onChangeRange = () => null,
 }) => {
-  const regionId = useMemo(() => 'region', []);
+  const regionId = useMemo(() => "region", []);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -40,7 +40,7 @@ export const ComponentEditor: React.FC<ComponentEditorProps> = ({
   const [firstDefaultRange] = useState(defaultRange || { start: 0, end: 1 });
   const [range, setRange] = useState(defaultRange || { start: 0, end: 1 });
 
-  const [name, setName] = useState('');
+  const [name, setName] = useState("");
   const [tags, setTags] = useState<string[]>([]);
 
   useEffect(() => {
@@ -50,8 +50,8 @@ export const ComponentEditor: React.FC<ComponentEditorProps> = ({
 
     const wavesurfer = WaveSurfer.create({
       container: containerRef.current,
-      waveColor: 'violet',
-      progressColor: 'purple',
+      waveColor: "violet",
+      progressColor: "purple",
       plugins: [
         RegionsPlugin.create({
           regions: [
@@ -60,7 +60,7 @@ export const ComponentEditor: React.FC<ComponentEditorProps> = ({
               start: firstDefaultRange.start,
               end: firstDefaultRange.end,
               loop: false,
-              color: 'rgba(255, 255, 255, 0.3)',
+              color: "rgba(255, 255, 255, 0.3)",
             },
           ],
         }),
@@ -74,7 +74,7 @@ export const ComponentEditor: React.FC<ComponentEditorProps> = ({
     return () => {
       wavesurfer.destroy();
     };
-  }, [regionId, audioRef, containerRef, firstDefaultRange]);
+  }, [regionId, firstDefaultRange]);
 
   useEffect(() => {
     const cb = (region: Region) => {
@@ -83,17 +83,18 @@ export const ComponentEditor: React.FC<ComponentEditorProps> = ({
       onChangeRange({ start, end });
     };
 
-    wavesurfer?.on('region-updated', cb);
+    wavesurfer?.on("region-updated", cb);
   }, [wavesurfer, onChangeRange]);
 
   return (
-    <section className={classNames('flex flex-col gap-2', className)}>
+    <section className={classNames("flex flex-col gap-2", className)}>
       <p className="mb-1 text-xs font-bold">Component Editor</p>
       <audio ref={audioRef} className="hidden" src={src} />
-      <div ref={containerRef} className="w-full"></div>
+      <div ref={containerRef} className="w-full" />
       <div className="flex justify-between">
         <button
           className="rounded-sm border px-2 text-sm"
+          type="button"
           onClick={() => {
             if (!wavesurfer || !wavesurfer.regions.list[regionId]) {
               return;
@@ -140,6 +141,7 @@ export const ComponentEditor: React.FC<ComponentEditorProps> = ({
           <div>
             <button
               className="rounded-sm border px-2 text-sm"
+              type="button"
               onClick={() => {
                 const data: Component = {
                   soundDocId,

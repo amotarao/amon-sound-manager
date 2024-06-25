@@ -1,10 +1,10 @@
-import classNames from 'classnames';
-import { doc, setDoc } from 'firebase/firestore';
-import { ref, uploadBytesResumable } from 'firebase/storage';
-import { useState } from 'react';
-import { useEffectOnce } from '../../hooks/useEffectOnce';
-import { firestore, storage } from '../../libs/firebase';
-import { Sound } from '../../types/sound';
+import classNames from "classnames";
+import { doc, setDoc } from "firebase/firestore";
+import { ref, uploadBytesResumable } from "firebase/storage";
+import { useState } from "react";
+import { useEffectOnce } from "../../hooks/useEffectOnce";
+import { firestore, storage } from "../../libs/firebase";
+import type { Sound } from "../../types/sound";
 
 type Props = {
   className?: string;
@@ -14,8 +14,16 @@ type Props = {
   langs: string[];
 };
 
-export function UploadingFileCard({ className, uid, file, tags, langs }: Props) {
-  const [state, setState] = useState<'initial' | 'uploading' | 'uploaded' | 'error'>('initial');
+export function UploadingFileCard({
+  className,
+  uid,
+  file,
+  tags,
+  langs,
+}: Props) {
+  const [state, setState] = useState<
+    "initial" | "uploading" | "uploaded" | "error"
+  >("initial");
   const [uploadRate, setUploadRate] = useState(0);
 
   useEffectOnce(() => {
@@ -36,32 +44,32 @@ export function UploadingFileCard({ className, uid, file, tags, langs }: Props) 
       };
       const storageRef = ref(storage, `sounds/${uid}.mp3`);
 
-      await setDoc(doc(firestore, 'sounds', uid), data);
+      await setDoc(doc(firestore, "sounds", uid), data);
       const task = uploadBytesResumable(storageRef, file);
 
       task.on(
-        'state_changed',
+        "state_changed",
         (snapshot) => {
-          setState('uploading');
+          setState("uploading");
           setUploadRate(snapshot.bytesTransferred / snapshot.totalBytes);
         },
         (error) => {
-          setState('error');
+          setState("error");
           console.error(error);
         },
         () => {
-          setState('uploaded');
-        }
+          setState("uploaded");
+        },
       );
     })();
   });
 
   return (
-    <div className={classNames('flex gap-2', className)}>
+    <div className={classNames("flex gap-2", className)}>
       <p>[{uid}]</p>
       <p>{file.name}</p>
       <p>{state}</p>
-      {state === 'uploading' && <p>{Math.floor(uploadRate * 100)}%</p>}
+      {state === "uploading" && <p>{Math.floor(uploadRate * 100)}%</p>}
     </div>
   );
 }

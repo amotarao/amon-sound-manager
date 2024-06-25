@@ -1,16 +1,25 @@
-import classNames from 'classnames';
-import { collection, CollectionReference, getCountFromServer, query, where } from 'firebase/firestore';
-import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
-import { useTags } from '../hooks/useTags';
-import { firestore } from '../libs/firebase';
-import { convertSearchParamsToObject } from '../libs/searchParams';
-import { Sound } from '../types/sound';
+import classNames from "classnames";
+import {
+  type CollectionReference,
+  collection,
+  getCountFromServer,
+  query,
+  where,
+} from "firebase/firestore";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { useTags } from "../hooks/useTags";
+import { firestore } from "../libs/firebase";
+import { convertSearchParamsToObject } from "../libs/searchParams";
+import type { Sound } from "../types/sound";
 
-const fetchTagCount = async (collectionId: string, tag: string): Promise<number> => {
+const fetchTagCount = async (
+  collectionId: string,
+  tag: string,
+): Promise<number> => {
   const c = collection(firestore, collectionId) as CollectionReference<Sound>;
-  const q = query(c, where('tags', 'array-contains', tag));
+  const q = query(c, where("tags", "array-contains", tag));
 
   const count = await getCountFromServer(q);
   return count.data().count;
@@ -21,10 +30,16 @@ export type TagItemCardProps = {
   collectionId: string;
   tag: string;
   isCurrent: boolean;
-  mode?: 'multiple';
+  mode?: "multiple";
 };
 
-export const TagItemCard: React.FC<TagItemCardProps> = ({ className, collectionId, tag, isCurrent, mode }) => {
+export const TagItemCard: React.FC<TagItemCardProps> = ({
+  className,
+  collectionId,
+  tag,
+  isCurrent,
+  mode,
+}) => {
   const searchParams = useSearchParams();
   const query = convertSearchParamsToObject(searchParams);
 
@@ -33,11 +48,11 @@ export const TagItemCard: React.FC<TagItemCardProps> = ({ className, collectionI
   const [count, setCount] = useState(-1);
 
   const tagQuery = useMemo((): string[] | null => {
-    if (tag === 'ALL') {
+    if (tag === "ALL") {
       return null;
     }
 
-    if (mode !== 'multiple') {
+    if (mode !== "multiple") {
       return [tag];
     }
 
@@ -49,7 +64,7 @@ export const TagItemCard: React.FC<TagItemCardProps> = ({ className, collectionI
   }, [tag, mode, currentTags]);
 
   useEffect(() => {
-    if (tag === 'ALL') {
+    if (tag === "ALL") {
       return;
     }
 
@@ -62,11 +77,11 @@ export const TagItemCard: React.FC<TagItemCardProps> = ({ className, collectionI
   return (
     <Link
       className={classNames(
-        `block px-4 py-2 text-sm`,
-        isCurrent ? 'bg-neutral-300 dark:bg-neutral-700' : null,
-        className
+        "block px-4 py-2 text-sm",
+        isCurrent ? "bg-neutral-300 dark:bg-neutral-700" : null,
+        className,
       )}
-      href={{ href: '/', query: { ...query, tag: tagQuery } }}
+      href={{ href: "/", query: { ...query, tag: tagQuery } }}
     >
       <p>
         <span className="mr-0.5">#</span>

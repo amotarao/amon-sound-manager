@@ -1,8 +1,10 @@
-import { AppNavigation } from './AppNavigation';
-import { Auth } from './Auth';
-import '../styles/globals.css';
+import { AppNavigation } from "./AppNavigation";
+import { Auth } from "./Auth";
+import "../styles/globals.css";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: { children: React.ReactNode }) {
   return (
     <html lang="ja-JP">
       <body>

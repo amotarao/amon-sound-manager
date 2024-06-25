@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useTags } from '../../hooks/useTags';
-import { TagItemCard } from '../TagItemCard';
-import { SoundPreviewList } from './SoundPreviewList';
+import { useEffect } from "react";
+import { useTags } from "../../hooks/useTags";
+import { TagItemCard } from "../TagItemCard";
+import { SoundPreviewList } from "./SoundPreviewList";
 
-const collectionId = 'sounds';
+const collectionId = "sounds";
 
 export default function Page({ children }: { children: React.ReactNode }) {
   const { tags, currentTags, fetchTags, deleteTag } = useTags(collectionId);
@@ -19,12 +19,19 @@ export default function Page({ children }: { children: React.ReactNode }) {
         {/* Tag */}
         <div className="flex h-full flex-col overflow-y-auto border-r pb-10">
           <ul>
-            {['ALL', ...tags].map((_tag) => (
-              <li key={_tag} className="after:mx-4 after:block after:h-[1px] after:bg-current after:content-['']">
+            {["ALL", ...tags].map((_tag) => (
+              <li
+                key={_tag}
+                className="after:mx-4 after:block after:h-[1px] after:bg-current after:content-['']"
+              >
                 <TagItemCard
                   collectionId={collectionId}
                   tag={_tag}
-                  isCurrent={_tag !== 'ALL' ? currentTags.includes(_tag) : !currentTags.length}
+                  isCurrent={
+                    _tag !== "ALL"
+                      ? currentTags.includes(_tag)
+                      : !currentTags.length
+                  }
                 />
               </li>
             ))}
@@ -39,6 +46,7 @@ export default function Page({ children }: { children: React.ReactNode }) {
                   <p className="shrink grow">{tag}</p>
                   <button
                     className="shrink-0 rounded border px-2 text-sm"
+                    type="button"
                     onClick={() => {
                       deleteTag(tag);
                     }}

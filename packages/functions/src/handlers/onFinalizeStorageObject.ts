@@ -1,12 +1,12 @@
 // eslint-disable-next-line import/no-unresolved
-import { ObjectMetadata } from 'firebase-functions/v1/storage';
+import type { ObjectMetadata } from "firebase-functions/v1/storage";
 // eslint-disable-next-line import/no-unresolved
-import { onObjectFinalized } from 'firebase-functions/v2/storage';
-import { parseBuffer } from 'music-metadata';
-import { defaultRegion } from '..';
-import { firestore } from '../libs/firebase';
-import { speechClient } from '../libs/speech';
-import { downloadObjectBuffer } from '../libs/storage';
+import { onObjectFinalized } from "firebase-functions/v2/storage";
+import { parseBuffer } from "music-metadata";
+import { defaultRegion } from "..";
+import { firestore } from "../libs/firebase";
+import { speechClient } from "../libs/speech";
+import { downloadObjectBuffer } from "../libs/storage";
 
 export const onFinalizeStorageObject = onObjectFinalized(
   {
@@ -24,7 +24,7 @@ export const onFinalizeStorageObject = onObjectFinalized(
       await saveTextResultToFirestore(object);
       return;
     }
-  }
+  },
 );
 
 /**
@@ -32,12 +32,16 @@ export const onFinalizeStorageObject = onObjectFinalized(
  * 非同期処理での実行の開始までを行う
  * 処理完了後、GCS に json が出力される
  */
-const runGenerateTextFromMp3 = async (object: Pick<ObjectMetadata, 'name' | 'bucket'>) => {
-  const docId = object.name?.replace(/^sounds\//, '').replace(/\.mp3$/, '');
+const runGenerateTextFromMp3 = async (
+  object: Pick<ObjectMetadata, "name" | "bucket">,
+) => {
+  const docId = object.name?.replace(/^sounds\//, "").replace(/\.mp3$/, "");
   const docRef = firestore.doc(`/sounds/${docId}`);
 
   const inputUri = `gs://${object.bucket}/${object.name}`;
-  const outputUri = inputUri.replace(/\/sounds\//, '/speeches/').replace(/\.mp3$/, '.json');
+  const outputUri = inputUri
+    .replace(/\/sounds\//, "/speeches/")
+    .replace(/\.mp3$/, ".json");
 
   const documentSnapshot = await docRef.get();
   const langs = documentSnapshot.data()?.langs as string[];
@@ -47,9 +51,9 @@ const runGenerateTextFromMp3 = async (object: Pick<ObjectMetadata, 'name' | 'buc
       uri: inputUri,
     },
     config: {
-      encoding: 'MP3',
+      encoding: "MP3",
       sampleRateHertz: 44100,
-      languageCode: langs[0] || 'ja-JP',
+      languageCode: langs[0] || "ja-JP",
       alternativeLanguageCodes: langs.slice(1),
     },
     outputConfig: {
@@ -61,12 +65,14 @@ const runGenerateTextFromMp3 = async (object: Pick<ObjectMetadata, 'name' | 'buc
 /**
  * mp3 のメタ情報を取得し、Firestore に保存する
  */
-const parseMp3Metadata = async (object: Pick<ObjectMetadata, 'name' | 'bucket'>) => {
-  const docId = object.name?.replace(/^sounds\//, '').replace(/\.mp3$/, '');
+const parseMp3Metadata = async (
+  object: Pick<ObjectMetadata, "name" | "bucket">,
+) => {
+  const docId = object.name?.replace(/^sounds\//, "").replace(/\.mp3$/, "");
   const docRef = firestore.doc(`/sounds/${docId}`);
 
   const data = await downloadObjectBuffer(object);
-  const metadata = await parseBuffer(data, 'audio/mpeg');
+  const metadata = await parseBuffer(data, "audio/mpeg");
 
   await docRef.update({
     fileMetadata: JSON.parse(JSON.stringify(metadata)),
@@ -76,8 +82,10 @@ const parseMp3Metadata = async (object: Pick<ObjectMetadata, 'name' | 'bucket'>)
 /**
  * GCS に主力された Speech to Text の結果を Firestore に保存する
  */
-const saveTextResultToFirestore = async (object: Pick<ObjectMetadata, 'name' | 'bucket'>) => {
-  const docId = object.name?.replace(/^speeches\//, '').replace(/\.json$/, '');
+const saveTextResultToFirestore = async (
+  object: Pick<ObjectMetadata, "name" | "bucket">,
+) => {
+  const docId = object.name?.replace(/^speeches\//, "").replace(/\.json$/, "");
   const docRef = firestore.doc(`/sounds/${docId}`);
 
   const buffer = await downloadObjectBuffer(object);

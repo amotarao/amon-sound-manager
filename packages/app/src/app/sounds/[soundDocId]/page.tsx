@@ -1,4 +1,4 @@
-import { FileCard } from './FileCard';
+import { FileCard } from "./FileCard";
 
 type PageContext = {
   params: {

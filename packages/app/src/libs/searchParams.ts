@@ -1,4 +1,6 @@
-export const convertSearchParamsToObject = (searchParams: URLSearchParams): Record<string, string | string[]> => {
+export const convertSearchParamsToObject = (
+  searchParams: URLSearchParams,
+): Record<string, string | string[]> => {
   const obj: Record<string, string[]> = {};
 
   for (const [key, value] of Array.from(searchParams.entries())) {
@@ -13,6 +15,6 @@ export const convertSearchParamsToObject = (searchParams: URLSearchParams): Reco
     Object.entries(obj).map(([key, value]) => {
       if (value.length === 1) return [key, value[0]];
       return [key, value];
-    })
+    }),
   );
 };

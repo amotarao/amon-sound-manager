@@ -1,21 +1,32 @@
-'use client';
+"use client";
 
-import classNames from 'classnames';
-import { deleteDoc, doc, DocumentReference, DocumentSnapshot, onSnapshot, updateDoc } from 'firebase/firestore';
-import { getDownloadURL, ref } from 'firebase/storage';
-import { debounce } from 'lodash';
-import dynamic from 'next/dynamic';
-import React, { useEffect, useMemo, useState } from 'react';
-import { firestore, storage } from '../../../libs/firebase';
-import { Sound } from '../../../types/sound';
-import { ResizableTextarea } from '../../ResizableTextarea';
-import { TagEditor } from '../../TagEditor';
+import classNames from "classnames";
+import {
+  type DocumentReference,
+  type DocumentSnapshot,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  updateDoc,
+} from "firebase/firestore";
+import { getDownloadURL, ref } from "firebase/storage";
+import { debounce } from "lodash";
+import dynamic from "next/dynamic";
+import type React from "react";
+import { useEffect, useMemo, useState } from "react";
+import { firestore, storage } from "../../../libs/firebase";
+import type { Sound } from "../../../types/sound";
+import { ResizableTextarea } from "../../ResizableTextarea";
+import { TagEditor } from "../../TagEditor";
 
-const ComponentEditor = dynamic(() => import('../../ComponentEditor').then((file) => file.ComponentEditor), {
-  ssr: false,
-});
+const ComponentEditor = dynamic(
+  () => import("../../ComponentEditor").then((file) => file.ComponentEditor),
+  {
+    ssr: false,
+  },
+);
 
-const collectionId = 'sounds';
+const collectionId = "sounds";
 
 type Props = {
   className?: string;
@@ -32,16 +43,19 @@ export function FileCard({ className, docId }: Props) {
   }, [snapshot]);
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(doc(firestore, collectionId, docId), (snapshot) => {
-      setSnapshot(snapshot as DocumentSnapshot<Sound>);
-    });
+    const unsubscribe = onSnapshot(
+      doc(firestore, collectionId, docId),
+      (snapshot) => {
+        setSnapshot(snapshot as DocumentSnapshot<Sound>);
+      },
+    );
 
     return () => {
       unsubscribe();
     };
   }, [docId]);
 
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState("");
   useEffect(() => {
     (async () => {
       const storageRef = ref(storage, `sounds/${docId}.mp3`);
@@ -55,9 +69,10 @@ export function FileCard({ className, docId }: Props) {
   }
 
   return (
-    <div className={classNames('relative flex flex-col gap-4 p-4', className)}>
+    <div className={classNames("relative flex flex-col gap-4 p-4", className)}>
       <button
         className="absolute right-4 top-4 rounded border px-2 text-sm"
+        type="button"
         onClick={() => {
           deleteDoc(snapshot.ref);
         }}
@@ -70,25 +85,42 @@ export function FileCard({ className, docId }: Props) {
         <p className="text-xs">Title: {data.fileMetadata?.common?.title}</p>
       </div>
       <div>
-        <audio className="h-[32px] w-[320px] text-xs" src={url} controls preload="metadata" />
+        <audio
+          className="h-[32px] w-[320px] text-xs"
+          src={url}
+          controls
+          preload="metadata"
+        />
       </div>
       <TitleSection docRef={snapshot.ref} defaultValue={data.title} />
       <div>
         <p className="mb-1 text-xs font-bold">Speech to Text</p>
-        {data.text && 'results' in data.text ? (
+        {data.text && "results" in data.text ? (
           <p className="text-sm">
             {data.text.results
-              .map((result) => result.alternatives.map((alternative) => alternative.transcript).join('\n'))
-              .join('\n')}
+              .map((result) =>
+                result.alternatives
+                  .map((alternative) => alternative.transcript)
+                  .join("\n"),
+              )
+              .join("\n")}
           </p>
         ) : (
           <p className="text-sm">データなし</p>
         )}
       </div>
-      <TextByManualSection docRef={snapshot.ref} defaultValue={data.textByManual} />
+      <TextByManualSection
+        docRef={snapshot.ref}
+        defaultValue={data.textByManual}
+      />
       <TagsSection docRef={snapshot.ref} defaultValue={data.tags} />
-      {data.tags.indexOf('DB') > -1 && url && (
-        <ComponentEditor className="border-t pt-4" src={url} soundDocId={docId} collectionId="dbKomponenten" />
+      {data.tags.indexOf("DB") > -1 && url && (
+        <ComponentEditor
+          className="border-t pt-4"
+          src={url}
+          soundDocId={docId}
+          collectionId="dbKomponenten"
+        />
       )}
     </div>
   );
@@ -96,9 +128,9 @@ export function FileCard({ className, docId }: Props) {
 
 const TitleSection: React.FC<{
   docRef: DocumentReference<Sound>;
-  defaultValue: Sound['title'];
+  defaultValue: Sound["title"];
 }> = ({ docRef, defaultValue }) => {
-  const [value, setValue] = useState(defaultValue || '');
+  const [value, setValue] = useState(defaultValue || "");
 
   const updateValue = useMemo(
     () =>
@@ -107,7 +139,7 @@ const TitleSection: React.FC<{
           title,
         });
       }, 1000),
-    [docRef]
+    [docRef],
   );
 
   return (
@@ -127,9 +159,9 @@ const TitleSection: React.FC<{
 
 const TextByManualSection: React.FC<{
   docRef: DocumentReference<Sound>;
-  defaultValue: Sound['textByManual'];
+  defaultValue: Sound["textByManual"];
 }> = ({ docRef, defaultValue }) => {
-  const [value, setValue] = useState(defaultValue || '');
+  const [value, setValue] = useState(defaultValue || "");
 
   const updateValue = useMemo(
     () =>
@@ -138,7 +170,7 @@ const TextByManualSection: React.FC<{
           textByManual: textByManual || null,
         });
       }, 1000),
-    [docRef]
+    [docRef],
   );
 
   return (
@@ -158,7 +190,7 @@ const TextByManualSection: React.FC<{
 
 const TagsSection: React.FC<{
   docRef: DocumentReference<Sound>;
-  defaultValue: Sound['tags'];
+  defaultValue: Sound["tags"];
 }> = ({ docRef, defaultValue }) => {
   const [value, setValue] = useState(defaultValue);
 
@@ -169,7 +201,7 @@ const TagsSection: React.FC<{
           tags,
         });
       }, 0),
-    [docRef]
+    [docRef],
   );
 
   return (

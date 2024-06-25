@@ -1,4 +1,4 @@
-import { IAudioMetadata } from 'music-metadata';
+import type { IAudioMetadata } from "music-metadata";
 
 export type Sound = {
   file: {
