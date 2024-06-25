@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-unresolved
 import { onDocumentWritten } from "firebase-functions/v2/firestore";
 import { defaultRegion } from "..";
 import { firestore } from "../libs/firebase";

@@ -1,5 +1,4 @@
 import { Storage } from "@google-cloud/storage";
-// eslint-disable-next-line import/no-unresolved
 import type { ObjectMetadata } from "firebase-functions/v1/storage";
 
 export const storage = new Storage();

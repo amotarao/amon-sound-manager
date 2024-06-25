@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/no-unresolved
 import type { ObjectMetadata } from "firebase-functions/v1/storage";
-// eslint-disable-next-line import/no-unresolved
 import { onObjectFinalized } from "firebase-functions/v2/storage";
 import { parseBuffer } from "music-metadata";
 import { defaultRegion } from "..";
