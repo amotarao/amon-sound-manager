@@ -11,5 +11,7 @@
     "node": "20",
     "pnpm": "9"
   },
-  "dependencies": {}
+  "devDependencies": {
+    "@biomejs/biome": "1.8.2"
+  }
 }
