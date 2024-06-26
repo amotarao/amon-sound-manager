@@ -3,7 +3,6 @@
 import classNames from "classnames";
 import {
   type CollectionReference,
-  type QueryDocumentSnapshot,
   collection,
   getDocs,
   limit,
@@ -13,7 +12,7 @@ import {
 import type { NextPage } from "next";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import useSWR from "swr";
 import { useTags } from "../../hooks/useTags";
 import { firestore } from "../../libs/firebase/index";
 import { convertSearchParamsToObject } from "../../libs/searchParams";
@@ -23,42 +22,31 @@ import { ComponentCard } from "./ComponentCard";
 
 const collectionId = "dbKomponenten";
 
-const fetchDocs = async (
-  tags: string[],
-): Promise<QueryDocumentSnapshot<Component>[]> => {
-  const c = collection(
-    firestore,
-    collectionId,
-  ) as CollectionReference<Component>;
-  let q = query(c);
-
-  q = query(q, limit(1000));
-  if (tags.length) {
-    q = query(q, where("tags", "array-contains-any", tags));
-  }
-
-  const querySnapshot = await getDocs(q);
-  return querySnapshot.docs;
-};
-
 const Page: NextPage = () => {
   const searchParams = useSearchParams();
-  const query = convertSearchParamsToObject(searchParams);
+  const queryA = convertSearchParamsToObject(searchParams);
   const componentDocId = searchParams.get("component");
 
-  const [docs, setDocs] = useState<QueryDocumentSnapshot<Component>[]>([]);
   const { tags, currentTags, fetchTags, deleteTag } = useTags(collectionId);
 
-  useEffect(() => {
-    setDocs([]);
-    fetchDocs(currentTags).then((docs) => {
-      setDocs(docs);
-    });
-  }, [currentTags]);
+  const { data: docs = [] } = useSWR(
+    [collectionId, "docs", { currentTags }],
+    async ([, , { currentTags }]) => {
+      const c = collection(
+        firestore,
+        collectionId,
+      ) as CollectionReference<Component>;
+      let q = query(c);
 
-  useEffect(() => {
-    fetchTags();
-  }, [fetchTags]);
+      q = query(q, limit(1000));
+      if (currentTags.length) {
+        q = query(q, where("tags", "array-contains-any", currentTags));
+      }
+
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs;
+    },
+  );
 
   return (
     <div className="h-full w-full overflow-x-auto">
@@ -96,7 +84,10 @@ const Page: NextPage = () => {
                     className="shrink-0 rounded border px-2 text-sm"
                     type="button"
                     onClick={() => {
-                      deleteTag(tag);
+                      (async () => {
+                        await deleteTag(tag);
+                        await fetchTags();
+                      })();
                     }}
                   >
                     Delete
@@ -134,7 +125,7 @@ const Page: NextPage = () => {
                       )}
                       href={{
                         href: "/",
-                        query: { ...query, component: doc.id },
+                        query: { ...queryA, component: doc.id },
                       }}
                     >
                       <p className="text-sm">{doc.data().name}</p>

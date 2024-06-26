@@ -4,13 +4,13 @@ import {
   type Query,
   type QueryDocumentSnapshot,
   collection,
+  getDocs,
   limit,
-  onSnapshot,
   orderBy,
   query,
   where,
 } from "firebase/firestore";
-import { useEffect, useMemo, useState } from "react";
+import useSWR from "swr";
 import { firestore } from "../../libs/firebase";
 import { archivedTag } from "../../libs/sound/constants";
 import { sortByRetake, sortByTitle } from "../../libs/sound/utils/sort";
@@ -35,24 +35,18 @@ type Props = {
 };
 
 export function SoundPreviewList({ className, currentTags }: Props) {
-  const [docs, setDocs] = useState<QueryDocumentSnapshot<Sound>[]>([]);
-  const query = useMemo(() => getQuery(currentTags || []), [currentTags]);
-  useEffect(() => {
-    setDocs([]);
-    const unsubscribe = onSnapshot(query, (querySnapshot) => {
-      setDocs(
-        querySnapshot.docs
-          .filter((doc) =>
-            currentTags?.every((tag) => doc.data().tags.includes(tag)),
-          )
-          .sort((a, z) => sortByRetake(a, z) || sortByTitle(a, z)),
-      );
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, [query, currentTags]);
+  const { data: docs = [] } = useSWR(
+    [collectionId, "docs", { currentTags }],
+    async ([, , { currentTags }]) => {
+      const query = getQuery(currentTags || []);
+      const { docs } = await getDocs(query);
+      return docs
+        .filter((doc) =>
+          currentTags?.every((tag) => doc.data().tags.includes(tag)),
+        )
+        .sort((a, z) => sortByRetake(a, z) || sortByTitle(a, z));
+    },
+  );
 
   return (
     <div className={classNames("grid grid-cols-1 gap-4", className)}>

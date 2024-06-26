@@ -6,36 +6,28 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
+import useSWR from "swr";
 import { firestore } from "../libs/firebase";
 import type { SoundTag } from "../types/sound";
 
 export const useTags = (collectionId: string) => {
   const searchParams = useSearchParams();
+  const currentTags = searchParams.getAll("tag");
 
-  const [tags, setTags] = useState<string[]>([]);
-  const [currentTags, setCurrentTags] = useState<string[]>([]);
-
-  useEffect(() => {
-    const tags = searchParams.getAll("tag");
-    JSON.stringify(currentTags) !== JSON.stringify(tags) &&
-      setCurrentTags(tags);
-  }, [searchParams, currentTags]);
-
-  const fetchTags = useCallback(async () => {
-    setTags([]);
+  const { data = [], mutate } = useSWR(["tags"], async () => {
     const c = collection(
       doc(collection(firestore, collectionId), "tags"),
       "tags",
     ) as CollectionReference<SoundTag>;
     const querySnapshot = await getDocs(c);
     const tags = querySnapshot.docs.map((doc) => doc.get("name") as string);
-    setTags(tags);
-  }, [collectionId]);
+    return tags;
+  });
 
   const deleteTag = useCallback(
-    (tag: string) => {
-      deleteDoc(
+    async (tag: string) => {
+      await deleteDoc(
         doc(
           collection(doc(collection(firestore, collectionId), "tags"), "tags"),
           tag,
@@ -46,9 +38,9 @@ export const useTags = (collectionId: string) => {
   );
 
   return {
-    tags,
+    tags: data,
     currentTags,
-    fetchTags,
+    fetchTags: mutate,
     deleteTag,
   };
 };

@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { useTags } from "../../hooks/useTags";
 import { TagItemCard } from "../TagItemCard";
 import { SoundPreviewList } from "./SoundPreviewList";
@@ -9,9 +8,6 @@ const collectionId = "sounds";
 
 export default function Page({ children }: { children: React.ReactNode }) {
   const { tags, currentTags, fetchTags, deleteTag } = useTags(collectionId);
-  useEffect(() => {
-    fetchTags();
-  }, [fetchTags]);
 
   return (
     <div className="h-full w-full overflow-x-auto">
@@ -48,7 +44,10 @@ export default function Page({ children }: { children: React.ReactNode }) {
                     className="shrink-0 rounded border px-2 text-sm"
                     type="button"
                     onClick={() => {
-                      deleteTag(tag);
+                      (async () => {
+                        await deleteTag(tag);
+                        await fetchTags();
+                      })();
                     }}
                   >
                     Delete

@@ -14,6 +14,7 @@ import { debounce } from "lodash";
 import dynamic from "next/dynamic";
 import type React from "react";
 import { useEffect, useMemo, useState } from "react";
+import useSWR from "swr";
 import { firestore, storage } from "../../../libs/firebase";
 import type { Sound } from "../../../types/sound";
 import { ResizableTextarea } from "../../ResizableTextarea";
@@ -55,14 +56,14 @@ export function FileCard({ className, docId }: Props) {
     };
   }, [docId]);
 
-  const [url, setUrl] = useState("");
-  useEffect(() => {
-    (async () => {
-      const storageRef = ref(storage, `sounds/${docId}.mp3`);
+  const { data: downloadUrl } = useSWR(
+    ["downloadUrl", `sounds/${docId}.mp3`],
+    async ([, fileName]) => {
+      const storageRef = ref(storage, fileName);
       const url = await getDownloadURL(storageRef);
-      setUrl(url);
-    })().catch(console.error);
-  }, [docId]);
+      return url;
+    },
+  );
 
   if (!snapshot || !data) {
     return null;
@@ -87,7 +88,7 @@ export function FileCard({ className, docId }: Props) {
       <div>
         <audio
           className="h-[32px] w-[320px] text-xs"
-          src={url}
+          src={downloadUrl}
           controls
           preload="metadata"
         />
@@ -114,10 +115,10 @@ export function FileCard({ className, docId }: Props) {
         defaultValue={data.textByManual}
       />
       <TagsSection docRef={snapshot.ref} defaultValue={data.tags} />
-      {data.tags.indexOf("DB") > -1 && url && (
+      {data.tags.indexOf("DB") > -1 && downloadUrl && (
         <ComponentEditor
           className="border-t pt-4"
-          src={url}
+          src={downloadUrl}
           soundDocId={docId}
           collectionId="dbKomponenten"
         />

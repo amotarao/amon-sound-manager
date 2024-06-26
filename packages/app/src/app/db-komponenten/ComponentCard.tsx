@@ -11,6 +11,7 @@ import { getDownloadURL, ref } from "firebase/storage";
 import { debounce } from "lodash";
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState } from "react";
+import useSWR from "swr";
 import { firestore, storage } from "../../libs/firebase";
 import type { Component } from "../../types/component";
 import type { Range } from "../ComponentEditor";
@@ -52,17 +53,14 @@ export function ComponentCard({ className, collectionId, docId }: Props) {
     };
   }, [collectionId, docId]);
 
-  const [url, setUrl] = useState<string>();
-  useEffect(() => {
-    (async () => {
-      if (!data) {
-        return;
-      }
-      const storageRef = ref(storage, `sounds/${data.soundDocId}.mp3`);
+  const { data: downloadUrl } = useSWR(
+    data?.soundDocId ? ["downloadUrl", `sounds/${data.soundDocId}.mp3`] : null,
+    async ([, fileName]) => {
+      const storageRef = ref(storage, fileName);
       const url = await getDownloadURL(storageRef);
-      setUrl(url);
-    })().catch(console.error);
-  }, [data]);
+      return url;
+    },
+  );
 
   if (!snapshot || !data) {
     return null;
@@ -85,11 +83,11 @@ export function ComponentCard({ className, collectionId, docId }: Props) {
       </div>
       <NameSection docRef={snapshot.ref} defaultValue={data.name} />
       <TagsSection docRef={snapshot.ref} defaultValue={data.tags} />
-      {url && (
+      {downloadUrl && (
         <ComponentSection
           docRef={snapshot.ref}
           defaultValue={{ start: data.start, end: data.end }}
-          url={url}
+          url={downloadUrl}
           soundDocId={data.soundDocId}
         />
       )}

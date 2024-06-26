@@ -8,7 +8,8 @@ import {
 } from "firebase/firestore";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
+import useSWR from "swr";
 import { useTags } from "../hooks/useTags";
 import { firestore } from "../libs/firebase";
 import { convertSearchParamsToObject } from "../libs/searchParams";
@@ -44,9 +45,6 @@ export const TagItemCard: React.FC<TagItemCardProps> = ({
   const query = convertSearchParamsToObject(searchParams);
 
   const { currentTags } = useTags(collectionId);
-
-  const [count, setCount] = useState(-1);
-
   const tagQuery = useMemo((): string[] | null => {
     if (tag === "ALL") {
       return null;
@@ -63,16 +61,12 @@ export const TagItemCard: React.FC<TagItemCardProps> = ({
     return [...currentTags, tag];
   }, [tag, mode, currentTags]);
 
-  useEffect(() => {
+  const { data: count = -1 } = useSWR(["tagCount", tag], async () => {
     if (tag === "ALL") {
-      return;
+      return undefined;
     }
-
-    setCount(-1);
-    fetchTagCount(collectionId, tag).then((cound) => {
-      setCount(cound);
-    });
-  }, [collectionId, tag]);
+    return fetchTagCount(collectionId, tag);
+  });
 
   return (
     <Link
