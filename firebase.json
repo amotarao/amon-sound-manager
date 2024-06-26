@@ -7,10 +7,7 @@
       "firebase-debug.log",
       "firebase-debug.*.log"
     ],
-    "predeploy": [
-      "yarn workspace @amon-sound-manager/functions lint",
-      "yarn workspace @amon-sound-manager/functions build"
-    ]
+    "predeploy": ["pnpm -F functions run build"]
   },
   "firestore": {
     "rules": "firestore.rules",
