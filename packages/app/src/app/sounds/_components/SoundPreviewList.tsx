@@ -11,10 +11,10 @@ import {
   where,
 } from "firebase/firestore";
 import useSWR from "swr";
-import { firestore } from "../../libs/firebase";
-import { archivedTag } from "../../libs/sound/constants";
-import { sortByRetake, sortByTitle } from "../../libs/sound/utils/sort";
-import type { Sound } from "../../types/sound";
+import { firestore } from "../../../libs/firebase";
+import { archivedTag } from "../../../libs/sound/constants";
+import { sortByRetake, sortByTitle } from "../../../libs/sound/utils/sort";
+import type { Sound } from "../../../types/sound";
 import { SoundPreviewCard } from "./SoundPreviewCard";
 
 const collectionId = "sounds";

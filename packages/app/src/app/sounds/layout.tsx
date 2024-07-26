@@ -2,7 +2,7 @@
 
 import { useTags } from "../../hooks/useTags";
 import { TagItemCard } from "../TagItemCard";
-import { SoundPreviewList } from "./SoundPreviewList";
+import { SoundPreviewList } from "./_components/SoundPreviewList";
 
 const collectionId = "sounds";
 

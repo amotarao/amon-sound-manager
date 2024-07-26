@@ -15,13 +15,13 @@ import dynamic from "next/dynamic";
 import type React from "react";
 import { useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
-import { firestore, storage } from "../../../libs/firebase";
-import type { Sound } from "../../../types/sound";
-import { ResizableTextarea } from "../../ResizableTextarea";
-import { TagEditor } from "../../TagEditor";
+import { firestore, storage } from "../../../../libs/firebase";
+import type { Sound } from "../../../../types/sound";
+import { ResizableTextarea } from "../../../ResizableTextarea";
+import { TagEditor } from "../../../TagEditor";
 
 const ComponentEditor = dynamic(
-  () => import("../../ComponentEditor").then((file) => file.ComponentEditor),
+  () => import("../../../ComponentEditor").then((file) => file.ComponentEditor),
   {
     ssr: false,
   },
