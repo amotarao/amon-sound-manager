@@ -43,11 +43,11 @@ export const SoundPreviewCard: React.FC<Props> = ({
   return (
     <Link
       className={classNames(
-        "grid grid-rows-1 gap-1 px-4 py-2",
-        currentSoundDocId === doc.id && "bg-neutral-300 dark:bg-neutral-700",
+        "grid grid-rows-1 gap-1 px-4 py-2 aria-[current=page]:bg-neutral-300 aria-[current=page]:dark:bg-neutral-700",
         className,
       )}
       href={`/sounds/${doc.id}${searchParams.toString() ? `?${searchParams.toString()}` : ""}`}
+      aria-current={currentSoundDocId === doc.id ? "page" : undefined}
     >
       {title ? (
         <p className="text-sm">

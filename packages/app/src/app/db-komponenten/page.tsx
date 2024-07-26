@@ -118,15 +118,14 @@ const Page: NextPage = () => {
                     className="after:mx-2 after:block after:h-[1px] after:bg-current after:content-['']"
                   >
                     <Link
-                      className={classNames(
-                        "grid grid-rows-1 gap-1 px-4 py-2",
-                        componentDocId === doc.id &&
-                          "bg-neutral-300 dark:bg-neutral-700",
-                      )}
+                      className="grid grid-rows-1 gap-1 px-4 py-2 aria-[current=page]:bg-neutral-300 aria-[current=page]:dark:bg-neutral-700"
                       href={{
                         href: "/",
                         query: { ...queryA, component: doc.id },
                       }}
+                      aria-current={
+                        componentDocId === doc.id ? "page" : undefined
+                      }
                     >
                       <p className="text-sm">{doc.data().name}</p>
                       {tags.length > 0 && (
