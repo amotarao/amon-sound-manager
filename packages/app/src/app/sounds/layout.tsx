@@ -1,5 +1,6 @@
 "use client";
 
+import { useSoundTagsSearchParams } from "../../hooks/searchParams/useSoundTagsSearchParams";
 import { useTags } from "../../hooks/useTags";
 import { TagItemCard } from "../TagItemCard";
 import { SoundPreviewList } from "./_components/SoundPreviewList";
@@ -7,7 +8,8 @@ import { SoundPreviewList } from "./_components/SoundPreviewList";
 const collectionId = "sounds";
 
 export default function Page({ children }: { children: React.ReactNode }) {
-  const { tags, currentTags, fetchTags, deleteTag } = useTags(collectionId);
+  const currentTags = useSoundTagsSearchParams();
+  const { tags, fetchTags, deleteTag } = useTags(collectionId);
 
   return (
     <div className="h-full w-full overflow-x-auto">
@@ -56,7 +58,7 @@ export default function Page({ children }: { children: React.ReactNode }) {
               ))}
             </div>
           )}
-          <SoundPreviewList currentTags={currentTags} />
+          <SoundPreviewList />
         </div>
         {/* Detail */}
         <div className="h-full overflow-y-auto">{children}</div>

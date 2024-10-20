@@ -13,6 +13,7 @@ import type { NextPage } from "next";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
+import { useSoundTagsSearchParams } from "../../hooks/searchParams/useSoundTagsSearchParams";
 import { useTags } from "../../hooks/useTags";
 import { firestore } from "../../libs/firebase/index";
 import { convertSearchParamsToObject } from "../../libs/searchParams";
@@ -27,7 +28,8 @@ const Page: NextPage = () => {
   const queryA = convertSearchParamsToObject(searchParams);
   const componentDocId = searchParams.get("component");
 
-  const { tags, currentTags, fetchTags, deleteTag } = useTags(collectionId);
+  const currentTags = useSoundTagsSearchParams();
+  const { tags, fetchTags, deleteTag } = useTags(collectionId);
 
   const { data: docs = [] } = useSWR(
     [collectionId, "docs", { currentTags }],

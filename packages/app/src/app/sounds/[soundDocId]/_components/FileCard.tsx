@@ -9,13 +9,14 @@ import {
   onSnapshot,
   updateDoc,
 } from "firebase/firestore";
-import { getDownloadURL, ref } from "firebase/storage";
 import { debounce } from "lodash";
 import dynamic from "next/dynamic";
 import type React from "react";
 import { useEffect, useMemo, useState } from "react";
-import useSWR from "swr";
-import { firestore, storage } from "../../../../libs/firebase";
+import { useGetSoundsByTagsSWR } from "../../../../hooks/firestore/useGetSoundsByTagsSWR";
+import { useSoundTagsSearchParams } from "../../../../hooks/searchParams/useSoundTagsSearchParams";
+import { firestore } from "../../../../libs/firebase";
+import { useGetSoundDownloadUrlSWR } from "../../../../swr/others/useGetSoundDownloadUrlSWR";
 import type { Sound } from "../../../../types/sound";
 import { ResizableTextarea } from "../../../ResizableTextarea";
 import { TagEditor } from "../../../TagEditor";
@@ -56,14 +57,10 @@ export function FileCard({ className, docId }: Props) {
     };
   }, [docId]);
 
-  const { data: downloadUrl } = useSWR(
-    ["downloadUrl", `sounds/${docId}.mp3`],
-    async ([, fileName]) => {
-      const storageRef = ref(storage, fileName);
-      const url = await getDownloadURL(storageRef);
-      return url;
-    },
-  );
+  const { data: downloadUrl } = useGetSoundDownloadUrlSWR(docId);
+
+  const tags = useSoundTagsSearchParams();
+  const { mutate } = useGetSoundsByTagsSWR(tags);
 
   if (!snapshot || !data) {
     return null;
@@ -93,7 +90,11 @@ export function FileCard({ className, docId }: Props) {
           preload="metadata"
         />
       </div>
-      <TitleSection docRef={snapshot.ref} defaultValue={data.title} />
+      <TitleSection
+        docRef={snapshot.ref}
+        defaultValue={data.title}
+        onChangeSuccess={mutate}
+      />
       <div>
         <p className="mb-1 text-xs font-bold">Speech to Text</p>
         {data.text && "results" in data.text ? (
@@ -113,8 +114,13 @@ export function FileCard({ className, docId }: Props) {
       <TextByManualSection
         docRef={snapshot.ref}
         defaultValue={data.textByManual}
+        onChangeSuccess={mutate}
       />
-      <TagsSection docRef={snapshot.ref} defaultValue={data.tags} />
+      <TagsSection
+        docRef={snapshot.ref}
+        defaultValue={data.tags}
+        onChangeSuccess={mutate}
+      />
       {data.tags.indexOf("DB") > -1 && downloadUrl && (
         <ComponentEditor
           className="border-t pt-4"
@@ -127,20 +133,28 @@ export function FileCard({ className, docId }: Props) {
   );
 }
 
-const TitleSection: React.FC<{
+type TitleSectionProps = {
   docRef: DocumentReference<Sound>;
   defaultValue: Sound["title"];
-}> = ({ docRef, defaultValue }) => {
+  onChangeSuccess?: () => void;
+};
+
+function TitleSection({
+  docRef,
+  defaultValue,
+  onChangeSuccess,
+}: TitleSectionProps) {
   const [value, setValue] = useState(defaultValue || "");
 
   const updateValue = useMemo(
     () =>
-      debounce((title: string) => {
-        updateDoc(docRef, {
+      debounce(async (title: string) => {
+        await updateDoc(docRef, {
           title,
         });
+        onChangeSuccess?.();
       }, 1000),
-    [docRef],
+    [docRef, onChangeSuccess],
   );
 
   return (
@@ -156,22 +170,30 @@ const TitleSection: React.FC<{
       />
     </div>
   );
-};
+}
 
-const TextByManualSection: React.FC<{
+type TextByManualSectionProps = {
   docRef: DocumentReference<Sound>;
   defaultValue: Sound["textByManual"];
-}> = ({ docRef, defaultValue }) => {
+  onChangeSuccess?: () => void;
+};
+
+function TextByManualSection({
+  docRef,
+  defaultValue,
+  onChangeSuccess,
+}: TextByManualSectionProps) {
   const [value, setValue] = useState(defaultValue || "");
 
   const updateValue = useMemo(
     () =>
-      debounce((textByManual: string) => {
-        updateDoc(docRef, {
+      debounce(async (textByManual: string) => {
+        await updateDoc(docRef, {
           textByManual: textByManual || null,
         });
+        onChangeSuccess?.();
       }, 1000),
-    [docRef],
+    [docRef, onChangeSuccess],
   );
 
   return (
@@ -187,22 +209,30 @@ const TextByManualSection: React.FC<{
       />
     </div>
   );
-};
+}
 
-const TagsSection: React.FC<{
+type TagSectionProps = {
   docRef: DocumentReference<Sound>;
   defaultValue: Sound["tags"];
-}> = ({ docRef, defaultValue }) => {
+  onChangeSuccess?: () => void;
+};
+
+function TagsSection({
+  docRef,
+  defaultValue,
+  onChangeSuccess,
+}: TagSectionProps) {
   const [value, setValue] = useState(defaultValue);
 
   const updateValue = useMemo(
     () =>
-      debounce((tags: string[]) => {
-        updateDoc(docRef, {
+      debounce(async (tags: string[]) => {
+        await updateDoc(docRef, {
           tags,
         });
+        onChangeSuccess?.();
       }, 0),
-    [docRef],
+    [docRef, onChangeSuccess],
   );
 
   return (
@@ -217,4 +247,4 @@ const TagsSection: React.FC<{
       />
     </div>
   );
-};
+}

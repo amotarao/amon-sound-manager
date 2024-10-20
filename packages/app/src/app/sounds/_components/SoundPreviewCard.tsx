@@ -3,6 +3,7 @@ import type { QueryDocumentSnapshot } from "firebase/firestore";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useMemo } from "react";
+import { useSoundTagsSearchParams } from "../../../hooks/searchParams/useSoundTagsSearchParams";
 import {
   archivedTag,
   retakeName,
@@ -14,14 +15,11 @@ type Props = {
   className?: string;
   cardClassName?: string;
   doc: QueryDocumentSnapshot<Sound>;
-  currentTags?: string[];
 };
 
-export const SoundPreviewCard: React.FC<Props> = ({
-  className,
-  doc,
-  currentTags,
-}) => {
+export const SoundPreviewCard: React.FC<Props> = ({ className, doc }) => {
+  const currentTags = useSoundTagsSearchParams();
+
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const currentSoundDocId = pathname.split("/").at(2);

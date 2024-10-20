@@ -10,6 +10,8 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useMemo } from "react";
 import useSWR from "swr";
+import { SOUNDS_PAGE_TAG_PARAM_KEY } from "../constants/sound";
+import { useSoundTagsSearchParams } from "../hooks/searchParams/useSoundTagsSearchParams";
 import { useTags } from "../hooks/useTags";
 import { firestore } from "../libs/firebase";
 import { convertSearchParamsToObject } from "../libs/searchParams";
@@ -44,7 +46,7 @@ export const TagItemCard: React.FC<TagItemCardProps> = ({
   const searchParams = useSearchParams();
   const query = convertSearchParamsToObject(searchParams);
 
-  const { currentTags } = useTags(collectionId);
+  const currentTags = useSoundTagsSearchParams();
   const tagQuery = useMemo((): string[] | null => {
     if (tag === "ALL") {
       return null;
@@ -74,7 +76,10 @@ export const TagItemCard: React.FC<TagItemCardProps> = ({
         "block px-4 py-2 text-sm aria-[current=page]:bg-neutral-300 aria-[current=page]:dark:bg-neutral-700",
         className,
       )}
-      href={{ href: "/", query: { ...query, tag: tagQuery } }}
+      href={{
+        href: "/",
+        query: { ...query, [SOUNDS_PAGE_TAG_PARAM_KEY]: tagQuery },
+      }}
       aria-current={isCurrent ? "page" : undefined}
     >
       <p>
