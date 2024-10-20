@@ -16,10 +16,10 @@ import { useEffect, useMemo, useState } from "react";
 import { useGetSoundsByTagsSWR } from "../../../../hooks/firestore/useGetSoundsByTagsSWR";
 import { useSoundTagsSearchParams } from "../../../../hooks/searchParams/useSoundTagsSearchParams";
 import { firestore } from "../../../../libs/firebase";
-import { useGetSoundDownloadUrlSWR } from "../../../../swr/others/useGetSoundDownloadUrlSWR";
 import type { Sound } from "../../../../types/sound";
 import { ResizableTextarea } from "../../../ResizableTextarea";
 import { TagEditor } from "../../../TagEditor";
+import { useGetSoundDownloadUrlSWR } from "../../../../hooks/others/useGetSoundDownloadUrlSWR";
 
 const ComponentEditor = dynamic(
   () => import("../../../ComponentEditor").then((file) => file.ComponentEditor),
