@@ -72,7 +72,7 @@ export const TagItemCard: React.FC<TagItemCardProps> = ({
   return (
     <Link
       className={classNames(
-        "block px-4 py-2 text-sm aria-[current=page]:bg-neutral-300 aria-[current=page]:dark:bg-neutral-700",
+        "block px-4 py-2 text-sm aria-[current=page]:bg-neutral-300 dark:aria-[current=page]:bg-neutral-700",
         className,
       )}
       href={{

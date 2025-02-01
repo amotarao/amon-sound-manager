@@ -93,7 +93,7 @@ export const ComponentEditor: React.FC<ComponentEditorProps> = ({
       <div ref={containerRef} className="w-full" />
       <div className="flex justify-between">
         <button
-          className="rounded-sm border px-2 text-sm"
+          className="rounded-xs border px-2 text-sm"
           type="button"
           onClick={() => {
             if (!wavesurfer || !wavesurfer.regions.list[regionId]) {
@@ -140,7 +140,7 @@ export const ComponentEditor: React.FC<ComponentEditorProps> = ({
           </div>
           <div>
             <button
-              className="rounded-sm border px-2 text-sm"
+              className="rounded-xs border px-2 text-sm"
               type="button"
               onClick={() => {
                 const data: Component = {

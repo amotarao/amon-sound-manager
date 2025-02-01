@@ -82,7 +82,7 @@ const Page: NextPage = () => {
                 <div key={tag} className="flex">
                   <p className="shrink grow">{tag}</p>
                   <button
-                    className="shrink-0 rounded border px-2 text-sm"
+                    className="shrink-0 rounded-sm border px-2 text-sm"
                     type="button"
                     onClick={() => {
                       (async () => {
@@ -119,7 +119,7 @@ const Page: NextPage = () => {
                     className="after:mx-2 after:block after:h-[1px] after:bg-current after:content-['']"
                   >
                     <Link
-                      className="grid grid-rows-1 gap-1 px-4 py-2 aria-[current=page]:bg-neutral-300 aria-[current=page]:dark:bg-neutral-700"
+                      className="grid grid-rows-1 gap-1 px-4 py-2 aria-[current=page]:bg-neutral-300 dark:aria-[current=page]:bg-neutral-700"
                       href={{
                         href: "/",
                         query: { ...queryA, component: doc.id },

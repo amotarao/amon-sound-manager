@@ -68,7 +68,7 @@ export function FileCard({ className, docId }: Props) {
   return (
     <div className={classNames("relative flex flex-col gap-4 p-4", className)}>
       <button
-        className="absolute right-4 top-4 rounded border px-2 text-sm"
+        className="absolute right-4 top-4 rounded-sm border px-2 text-sm"
         type="button"
         onClick={() => {
           deleteDoc(snapshot.ref);

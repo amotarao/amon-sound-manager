@@ -43,7 +43,7 @@ export default function Page({ children }: { children: React.ReactNode }) {
                 <div key={tag} className="flex">
                   <p className="shrink grow">{tag}</p>
                   <button
-                    className="shrink-0 rounded border px-2 text-sm"
+                    className="shrink-0 rounded-sm border px-2 text-sm"
                     type="button"
                     onClick={() => {
                       (async () => {

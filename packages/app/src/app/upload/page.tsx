@@ -45,7 +45,7 @@ const Page: NextPage = () => {
   return (
     <div className="mx-auto max-w-[640px]">
       <h1 className="mb-4 text-xl">upload</h1>
-      <div className="mb-4 flex flex-col gap-4 rounded border p-4">
+      <div className="mb-4 flex flex-col gap-4 rounded-sm border p-4">
         <div className="flex flex-col gap-2">
           <label className="block text-xs" htmlFor={tagsId}>
             Tags

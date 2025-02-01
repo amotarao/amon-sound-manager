@@ -41,7 +41,7 @@ export const SoundPreviewCard: React.FC<Props> = ({ className, doc }) => {
   return (
     <Link
       className={classNames(
-        "grid grid-rows-1 gap-1 px-4 py-2 aria-[current=page]:bg-neutral-300 aria-[current=page]:dark:bg-neutral-700",
+        "grid grid-rows-1 gap-1 px-4 py-2 aria-[current=page]:bg-neutral-300 dark:aria-[current=page]:bg-neutral-700",
         className,
       )}
       href={`/sounds/${doc.id}${searchParams.toString() ? `?${searchParams.toString()}` : ""}`}
@@ -78,7 +78,7 @@ const RetakeLabel: React.FC<{
   return (
     <span
       className={classNames(
-        "rounded-sm bg-white px-1 text-xs text-black",
+        "rounded-xs bg-white px-1 text-xs text-black",
         className,
       )}
       aria-label={retakeName}
