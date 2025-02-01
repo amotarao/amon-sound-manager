@@ -9,17 +9,16 @@ import {
   onSnapshot,
   updateDoc,
 } from "firebase/firestore";
-import { debounce } from "lodash";
+import debounce from "lodash/debounce";
 import dynamic from "next/dynamic";
-import type React from "react";
 import { useEffect, useMemo, useState } from "react";
 import { useGetSoundsByTagsSWR } from "../../../../hooks/firestore/useGetSoundsByTagsSWR";
+import { useGetSoundDownloadUrlSWR } from "../../../../hooks/others/useGetSoundDownloadUrlSWR";
 import { useSoundTagsSearchParams } from "../../../../hooks/searchParams/useSoundTagsSearchParams";
 import { firestore } from "../../../../libs/firebase";
 import type { Sound } from "../../../../types/sound";
 import { ResizableTextarea } from "../../../ResizableTextarea";
 import { TagEditor } from "../../../TagEditor";
-import { useGetSoundDownloadUrlSWR } from "../../../../hooks/others/useGetSoundDownloadUrlSWR";
 
 const ComponentEditor = dynamic(
   () => import("../../../ComponentEditor").then((file) => file.ComponentEditor),
@@ -69,7 +68,7 @@ export function FileCard({ className, docId }: Props) {
   return (
     <div className={classNames("relative flex flex-col gap-4 p-4", className)}>
       <button
-        className="absolute right-4 top-4 rounded border px-2 text-sm"
+        className="absolute right-4 top-4 rounded-sm border px-2 text-sm"
         type="button"
         onClick={() => {
           deleteDoc(snapshot.ref);

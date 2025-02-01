@@ -55,7 +55,7 @@ export function TagEditor({
   return (
     <div
       className={classNames(
-        "flex flex-wrap gap-2 rounded border p-2",
+        "flex flex-wrap gap-2 rounded-sm border p-2",
         className,
       )}
     >

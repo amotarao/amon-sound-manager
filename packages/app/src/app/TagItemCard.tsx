@@ -12,7 +12,6 @@ import { useMemo } from "react";
 import useSWR from "swr";
 import { SOUNDS_PAGE_TAG_PARAM_KEY } from "../constants/sound";
 import { useSoundTagsSearchParams } from "../hooks/searchParams/useSoundTagsSearchParams";
-import { useTags } from "../hooks/useTags";
 import { firestore } from "../libs/firebase";
 import { convertSearchParamsToObject } from "../libs/searchParams";
 import type { Sound } from "../types/sound";
@@ -28,7 +27,7 @@ const fetchTagCount = async (
   return count.data().count;
 };
 
-export type TagItemCardProps = {
+type Props = {
   className?: string;
   collectionId: string;
   tag: string;
@@ -36,13 +35,13 @@ export type TagItemCardProps = {
   mode?: "multiple";
 };
 
-export const TagItemCard: React.FC<TagItemCardProps> = ({
+export function TagItemCard({
   className,
   collectionId,
   tag,
   isCurrent,
   mode,
-}) => {
+}: Props) {
   const searchParams = useSearchParams();
   const query = convertSearchParamsToObject(searchParams);
 
@@ -73,7 +72,7 @@ export const TagItemCard: React.FC<TagItemCardProps> = ({
   return (
     <Link
       className={classNames(
-        "block px-4 py-2 text-sm aria-[current=page]:bg-neutral-300 aria-[current=page]:dark:bg-neutral-700",
+        "block px-4 py-2 text-sm aria-[current=page]:bg-neutral-300 dark:aria-[current=page]:bg-neutral-700",
         className,
       )}
       href={{
@@ -89,4 +88,4 @@ export const TagItemCard: React.FC<TagItemCardProps> = ({
       </p>
     </Link>
   );
-};
+}

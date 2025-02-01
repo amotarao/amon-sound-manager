@@ -1,6 +1,5 @@
 "use client";
 
-import classNames from "classnames";
 import {
   type CollectionReference,
   collection,
@@ -9,7 +8,6 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import type { NextPage } from "next";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
@@ -23,7 +21,7 @@ import { ComponentCard } from "./ComponentCard";
 
 const collectionId = "dbKomponenten";
 
-const Page: NextPage = () => {
+export default function Page() {
   const searchParams = useSearchParams();
   const queryA = convertSearchParamsToObject(searchParams);
   const componentDocId = searchParams.get("component");
@@ -52,7 +50,7 @@ const Page: NextPage = () => {
 
   return (
     <div className="h-full w-full overflow-x-auto">
-      <div className="grid h-full min-w-1080 grid-cols-[240px_320px_1fr] overflow-hidden">
+      <div className="min-w-1080 grid h-full grid-cols-[240px_320px_1fr] overflow-hidden">
         {/* Tag */}
         <div className="flex h-full flex-col overflow-y-auto border-r pb-10">
           <ul>
@@ -83,7 +81,7 @@ const Page: NextPage = () => {
                 <div key={tag} className="flex">
                   <p className="shrink grow">{tag}</p>
                   <button
-                    className="shrink-0 rounded border px-2 text-sm"
+                    className="shrink-0 rounded-sm border px-2 text-sm"
                     type="button"
                     onClick={() => {
                       (async () => {
@@ -120,7 +118,7 @@ const Page: NextPage = () => {
                     className="after:mx-2 after:block after:h-[1px] after:bg-current after:content-['']"
                   >
                     <Link
-                      className="grid grid-rows-1 gap-1 px-4 py-2 aria-[current=page]:bg-neutral-300 aria-[current=page]:dark:bg-neutral-700"
+                      className="grid grid-rows-1 gap-1 px-4 py-2 aria-[current=page]:bg-neutral-300 dark:aria-[current=page]:bg-neutral-700"
                       href={{
                         href: "/",
                         query: { ...queryA, component: doc.id },
@@ -161,6 +159,4 @@ const Page: NextPage = () => {
       </div>
     </div>
   );
-};
-
-export default Page;
+}

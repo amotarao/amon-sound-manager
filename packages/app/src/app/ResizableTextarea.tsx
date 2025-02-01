@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef } from "react";
 
-export type ResizableTextareaProps = JSX.IntrinsicElements["textarea"];
+type Props = React.ComponentPropsWithRef<"textarea">;
 
-export const ResizableTextarea: React.FC<ResizableTextareaProps> = (props) => {
+export function ResizableTextarea(props: Props) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const calc = useCallback(() => {
@@ -26,4 +26,4 @@ export const ResizableTextarea: React.FC<ResizableTextareaProps> = (props) => {
       }}
     />
   );
-};
+}

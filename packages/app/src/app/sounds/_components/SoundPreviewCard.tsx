@@ -17,7 +17,7 @@ type Props = {
   doc: QueryDocumentSnapshot<Sound>;
 };
 
-export const SoundPreviewCard: React.FC<Props> = ({ className, doc }) => {
+export function SoundPreviewCard({ className, doc }: Props) {
   const currentTags = useSoundTagsSearchParams();
 
   const pathname = usePathname();
@@ -41,7 +41,7 @@ export const SoundPreviewCard: React.FC<Props> = ({ className, doc }) => {
   return (
     <Link
       className={classNames(
-        "grid grid-rows-1 gap-1 px-4 py-2 aria-[current=page]:bg-neutral-300 aria-[current=page]:dark:bg-neutral-700",
+        "grid grid-rows-1 gap-1 px-4 py-2 aria-[current=page]:bg-neutral-300 dark:aria-[current=page]:bg-neutral-700",
         className,
       )}
       href={`/sounds/${doc.id}${searchParams.toString() ? `?${searchParams.toString()}` : ""}`}
@@ -70,15 +70,17 @@ export const SoundPreviewCard: React.FC<Props> = ({ className, doc }) => {
       </ul>
     </Link>
   );
+}
+
+type RetakeLabelProps = {
+  className?: string;
 };
 
-const RetakeLabel: React.FC<{
-  className?: string;
-}> = ({ className }) => {
+function RetakeLabel({ className }: RetakeLabelProps) {
   return (
     <span
       className={classNames(
-        "rounded-sm bg-white px-1 text-xs text-black",
+        "rounded-xs bg-white px-1 text-xs text-black",
         className,
       )}
       aria-label={retakeName}
@@ -86,4 +88,4 @@ const RetakeLabel: React.FC<{
       ▲
     </span>
   );
-};
+}

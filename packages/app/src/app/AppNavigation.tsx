@@ -26,12 +26,12 @@ export function AppNavigation({ className }: Props) {
         <Link href="/">amon sound manager</Link>
       </div>
       <div className="flex gap-4">
-        <Link className="rounded border px-4 py-1" href="/upload">
+        <Link className="rounded-sm border px-4 py-1" href="/upload">
           Uplaod
         </Link>
         {loading ? null : !signedIn ? (
           <button
-            className="rounded border px-4 py-1"
+            className="rounded-sm border px-4 py-1"
             type="button"
             onClick={() => {
               signInWithRedirect(auth, provider);
@@ -41,7 +41,7 @@ export function AppNavigation({ className }: Props) {
           </button>
         ) : (
           <button
-            className="rounded border px-4 py-1"
+            className="rounded-sm border px-4 py-1"
             type="button"
             onClick={() => {
               signOut(auth);

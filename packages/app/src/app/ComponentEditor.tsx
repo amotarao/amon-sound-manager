@@ -12,7 +12,7 @@ export type Range = {
   end: number;
 };
 
-export type ComponentEditorProps = {
+type Props = {
   className?: string;
   src: string;
   soundDocId: string;
@@ -22,7 +22,7 @@ export type ComponentEditorProps = {
   onChangeRange?: (range: Range) => void;
 };
 
-export const ComponentEditor: React.FC<ComponentEditorProps> = ({
+export function ComponentEditor({
   className,
   src,
   soundDocId,
@@ -30,7 +30,7 @@ export const ComponentEditor: React.FC<ComponentEditorProps> = ({
   readonly,
   defaultRange,
   onChangeRange = () => null,
-}) => {
+}: Props) {
   const regionId = useMemo(() => "region", []);
 
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -93,7 +93,7 @@ export const ComponentEditor: React.FC<ComponentEditorProps> = ({
       <div ref={containerRef} className="w-full" />
       <div className="flex justify-between">
         <button
-          className="rounded-sm border px-2 text-sm"
+          className="rounded-xs border px-2 text-sm"
           type="button"
           onClick={() => {
             if (!wavesurfer || !wavesurfer.regions.list[regionId]) {
@@ -140,7 +140,7 @@ export const ComponentEditor: React.FC<ComponentEditorProps> = ({
           </div>
           <div>
             <button
-              className="rounded-sm border px-2 text-sm"
+              className="rounded-xs border px-2 text-sm"
               type="button"
               onClick={() => {
                 const data: Component = {
@@ -160,4 +160,4 @@ export const ComponentEditor: React.FC<ComponentEditorProps> = ({
       )}
     </section>
   );
-};
+}

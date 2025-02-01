@@ -13,7 +13,7 @@ export default function Page({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="h-full w-full overflow-x-auto">
-      <div className="grid h-full min-w-1080 grid-cols-[240px_400px_1fr] overflow-hidden">
+      <div className="min-w-1080 grid h-full grid-cols-[240px_400px_1fr] overflow-hidden">
         {/* Tag */}
         <div className="flex h-full flex-col overflow-y-auto border-r pb-10">
           <ul>
@@ -43,7 +43,7 @@ export default function Page({ children }: { children: React.ReactNode }) {
                 <div key={tag} className="flex">
                   <p className="shrink grow">{tag}</p>
                   <button
-                    className="shrink-0 rounded border px-2 text-sm"
+                    className="shrink-0 rounded-sm border px-2 text-sm"
                     type="button"
                     onClick={() => {
                       (async () => {

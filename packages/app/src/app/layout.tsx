@@ -1,10 +1,11 @@
+import "../styles/globals.css";
+import { LayoutPropsBase } from "../types/page-layout";
 import { AppNavigation } from "./AppNavigation";
 import { Auth } from "./Auth";
-import "../styles/globals.css";
 
-export default function RootLayout({
-  children,
-}: { children: React.ReactNode }) {
+type Props = LayoutPropsBase;
+
+export default function RootLayout({ children }: Props) {
   return (
     <html lang="ja-JP">
       <body>
