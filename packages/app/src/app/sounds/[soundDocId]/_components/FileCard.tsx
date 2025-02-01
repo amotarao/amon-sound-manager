@@ -9,7 +9,7 @@ import {
   onSnapshot,
   updateDoc,
 } from "firebase/firestore";
-import { debounce } from "lodash";
+import debounce from "lodash/debounce";
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState } from "react";
 import { useGetSoundsByTagsSWR } from "../../../../hooks/firestore/useGetSoundsByTagsSWR";
