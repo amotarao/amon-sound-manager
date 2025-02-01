@@ -95,10 +95,12 @@ export function ComponentCard({ className, collectionId, docId }: Props) {
   );
 }
 
-const NameSection: React.FC<{
+type NameSectionProps = {
   docRef: DocumentReference<Component>;
   defaultValue: Component["name"];
-}> = ({ docRef, defaultValue }) => {
+};
+
+function NameSection({ docRef, defaultValue }: NameSectionProps) {
   const [value, setValue] = useState(defaultValue || "");
 
   const updateValue = useMemo(
@@ -124,12 +126,14 @@ const NameSection: React.FC<{
       />
     </div>
   );
-};
+}
 
-const TagsSection: React.FC<{
+type TagsSectionProps = {
   docRef: DocumentReference<Component>;
   defaultValue: Component["tags"];
-}> = ({ docRef, defaultValue }) => {
+};
+
+function TagsSection({ docRef, defaultValue }: TagsSectionProps) {
   const [value, setValue] = useState(defaultValue);
 
   const updateValue = useMemo(
@@ -154,14 +158,21 @@ const TagsSection: React.FC<{
       />
     </div>
   );
-};
+}
 
-const ComponentSection: React.FC<{
+type ComponentSectionProps = {
   docRef: DocumentReference<Component>;
   defaultValue: Range;
   url: string;
   soundDocId: string;
-}> = ({ docRef, defaultValue, url, soundDocId }) => {
+};
+
+function ComponentSection({
+  docRef,
+  defaultValue,
+  url,
+  soundDocId,
+}: ComponentSectionProps) {
   const updateValue = useMemo(
     () =>
       debounce(({ start, end }: Range) => {
@@ -184,4 +195,4 @@ const ComponentSection: React.FC<{
       onChangeRange={updateValue}
     />
   );
-};
+}

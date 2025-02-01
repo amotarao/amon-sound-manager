@@ -27,7 +27,7 @@ const fetchTagCount = async (
   return count.data().count;
 };
 
-export type TagItemCardProps = {
+type Props = {
   className?: string;
   collectionId: string;
   tag: string;
@@ -35,13 +35,13 @@ export type TagItemCardProps = {
   mode?: "multiple";
 };
 
-export const TagItemCard: React.FC<TagItemCardProps> = ({
+export function TagItemCard({
   className,
   collectionId,
   tag,
   isCurrent,
   mode,
-}) => {
+}: Props) {
   const searchParams = useSearchParams();
   const query = convertSearchParamsToObject(searchParams);
 
@@ -88,4 +88,4 @@ export const TagItemCard: React.FC<TagItemCardProps> = ({
       </p>
     </Link>
   );
-};
+}

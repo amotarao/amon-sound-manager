@@ -17,7 +17,7 @@ type Props = {
   doc: QueryDocumentSnapshot<Sound>;
 };
 
-export const SoundPreviewCard: React.FC<Props> = ({ className, doc }) => {
+export function SoundPreviewCard({ className, doc }: Props) {
   const currentTags = useSoundTagsSearchParams();
 
   const pathname = usePathname();
@@ -70,11 +70,13 @@ export const SoundPreviewCard: React.FC<Props> = ({ className, doc }) => {
       </ul>
     </Link>
   );
+}
+
+type RetakeLabelProps = {
+  className?: string;
 };
 
-const RetakeLabel: React.FC<{
-  className?: string;
-}> = ({ className }) => {
+function RetakeLabel({ className }: RetakeLabelProps) {
   return (
     <span
       className={classNames(
@@ -86,4 +88,4 @@ const RetakeLabel: React.FC<{
       ▲
     </span>
   );
-};
+}

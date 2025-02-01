@@ -12,7 +12,7 @@ export type Range = {
   end: number;
 };
 
-export type ComponentEditorProps = {
+type Props = {
   className?: string;
   src: string;
   soundDocId: string;
@@ -22,7 +22,7 @@ export type ComponentEditorProps = {
   onChangeRange?: (range: Range) => void;
 };
 
-export const ComponentEditor: React.FC<ComponentEditorProps> = ({
+export function ComponentEditor({
   className,
   src,
   soundDocId,
@@ -30,7 +30,7 @@ export const ComponentEditor: React.FC<ComponentEditorProps> = ({
   readonly,
   defaultRange,
   onChangeRange = () => null,
-}) => {
+}: Props) {
   const regionId = useMemo(() => "region", []);
 
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -160,4 +160,4 @@ export const ComponentEditor: React.FC<ComponentEditorProps> = ({
       )}
     </section>
   );
-};
+}
