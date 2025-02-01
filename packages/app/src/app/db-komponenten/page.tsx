@@ -8,7 +8,6 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import type { NextPage } from "next";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
@@ -22,7 +21,7 @@ import { ComponentCard } from "./ComponentCard";
 
 const collectionId = "dbKomponenten";
 
-const Page: NextPage = () => {
+export default function Page() {
   const searchParams = useSearchParams();
   const queryA = convertSearchParamsToObject(searchParams);
   const componentDocId = searchParams.get("component");
@@ -160,6 +159,4 @@ const Page: NextPage = () => {
       </div>
     </div>
   );
-};
-
-export default Page;
+}

@@ -1,13 +1,12 @@
 "use client";
 
-import type { NextPage } from "next";
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useUniqueId } from "../../hooks/useUniqueId";
 import { TagEditor } from "../TagEditor";
 import { UploadingFileCard } from "./UploadingFileCard";
 
-const Page: NextPage = () => {
+export default function Page() {
   const [files, setFiles] = useState<
     {
       uid: string;
@@ -85,6 +84,4 @@ const Page: NextPage = () => {
       </div>
     </div>
   );
-};
-
-export default Page;
+}
