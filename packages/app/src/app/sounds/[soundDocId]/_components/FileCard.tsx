@@ -11,15 +11,14 @@ import {
 } from "firebase/firestore";
 import { debounce } from "lodash";
 import dynamic from "next/dynamic";
-import type React from "react";
 import { useEffect, useMemo, useState } from "react";
 import { useGetSoundsByTagsSWR } from "../../../../hooks/firestore/useGetSoundsByTagsSWR";
+import { useGetSoundDownloadUrlSWR } from "../../../../hooks/others/useGetSoundDownloadUrlSWR";
 import { useSoundTagsSearchParams } from "../../../../hooks/searchParams/useSoundTagsSearchParams";
 import { firestore } from "../../../../libs/firebase";
 import type { Sound } from "../../../../types/sound";
 import { ResizableTextarea } from "../../../ResizableTextarea";
 import { TagEditor } from "../../../TagEditor";
-import { useGetSoundDownloadUrlSWR } from "../../../../hooks/others/useGetSoundDownloadUrlSWR";
 
 const ComponentEditor = dynamic(
   () => import("../../../ComponentEditor").then((file) => file.ComponentEditor),

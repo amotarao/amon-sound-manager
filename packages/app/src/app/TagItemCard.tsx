@@ -12,7 +12,6 @@ import { useMemo } from "react";
 import useSWR from "swr";
 import { SOUNDS_PAGE_TAG_PARAM_KEY } from "../constants/sound";
 import { useSoundTagsSearchParams } from "../hooks/searchParams/useSoundTagsSearchParams";
-import { useTags } from "../hooks/useTags";
 import { firestore } from "../libs/firebase";
 import { convertSearchParamsToObject } from "../libs/searchParams";
 import type { Sound } from "../types/sound";

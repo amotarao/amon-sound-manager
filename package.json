@@ -12,7 +12,7 @@
     "pnpm": "9"
   },
   "scripts": {
-    "check": "biome check --write ."
+    "format": "prettier --write ."
   },
   "devDependencies": {
     "@biomejs/biome": "1.8.2",

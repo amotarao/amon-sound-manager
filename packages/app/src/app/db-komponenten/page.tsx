@@ -1,6 +1,5 @@
 "use client";
 
-import classNames from "classnames";
 import {
   type CollectionReference,
   collection,
@@ -52,7 +51,7 @@ const Page: NextPage = () => {
 
   return (
     <div className="h-full w-full overflow-x-auto">
-      <div className="grid h-full min-w-1080 grid-cols-[240px_320px_1fr] overflow-hidden">
+      <div className="min-w-1080 grid h-full grid-cols-[240px_320px_1fr] overflow-hidden">
         {/* Tag */}
         <div className="flex h-full flex-col overflow-y-auto border-r pb-10">
           <ul>
