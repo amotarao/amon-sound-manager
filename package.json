@@ -4,7 +4,9 @@
   "private": true,
   "repository": "git@github.com:amotarao/amon-sound-manager.git",
   "author": "Amon Sawamura <amotarao@gmail.com>",
-  "workspaces": ["packages/*"],
+  "workspaces": [
+    "packages/*"
+  ],
   "engines": {
     "node": "20",
     "pnpm": "9"
@@ -13,6 +15,9 @@
     "check": "biome check --write ."
   },
   "devDependencies": {
-    "@biomejs/biome": "1.8.2"
+    "@biomejs/biome": "1.8.2",
+    "prettier": "^3.4.2",
+    "prettier-plugin-organize-imports": "^4.1.0",
+    "prettier-plugin-tailwindcss": "^0.6.11"
   }
 }
