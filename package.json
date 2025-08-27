@@ -8,8 +8,7 @@
     "packages/*"
   ],
   "engines": {
-    "node": "22",
-    "pnpm": "10"
+    "node": "22"
   },
   "scripts": {
     "format": "prettier --write ."
