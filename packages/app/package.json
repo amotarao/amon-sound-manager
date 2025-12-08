@@ -19,7 +19,7 @@
     "react-dom": "19.2.1",
     "swr": "^2.2.5",
     "uuid": "^10.0.0",
-    "wavesurfer.js": "6"
+    "wavesurfer.js": "7"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.2",
