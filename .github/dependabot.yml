@@ -23,3 +23,7 @@ updates:
         patterns:
           - "next"
           - "eslint-config-next"
+      tailwindcss:
+        patterns:
+          - "tailwindcss"
+          - "@tailwindcss/*"
