@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.18",
-    "@types/lodash": "^4.17.15",
+    "@types/lodash": "^4.17.21",
     "@types/node": "22",
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
